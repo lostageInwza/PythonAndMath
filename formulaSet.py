@@ -13,6 +13,7 @@ class Calculate:
 		return result
 
 	def greatestCommon(self, x, y, z):
+		result = 0
 		max_value = self.greatestNum(x, y, z)
 		temp_x, temp_y, temp_z = x, y, z
 		while max_value != 1:
@@ -20,14 +21,17 @@ class Calculate:
 				temp_y/=max_value
 				temp_x/=max_value
 				temp_z/=max_value
-				print(max_value, "flag pass")
+				result = max_value
 			else:
 				pass
 			max_value-=1
-		return int(temp_x), int(temp_y), int(temp_z)
-
-	def leastCommon():
-		pass
+		return int(temp_x), int(temp_y), int(temp_z), result
+		
+	def leastCommon(self, x, y, z):
+		result = 0
+		compare_number = 0
+		while True:
+			compare_number+=1
 
 	def factorial(self, x):
 		result = 1
@@ -36,7 +40,8 @@ class Calculate:
 			x-=1
 		return result
 
-	def extractComponent(self, x, result):
+	def extractComponent(self, x):
+		result = []
 		temp_x = x
 		x = 1
 		while x != temp_x:
@@ -47,14 +52,12 @@ class Calculate:
 			x+=1
 		result.append(temp_x)
 		return result
-
-
 	
-
-
+	def checkPrimeNumber(self, x):
+		check = self.extractComponent(x)
+		if len(check) <= 2:
+			print(x, "It's prime number")
+		else:
+			print(x, "it's not prime number")
+			
 a = Calculate()
-#print(a.greatestNum(99, 29, 22))
-
-
-
-#print(a.extractComponent(234, []))
