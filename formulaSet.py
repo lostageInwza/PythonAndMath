@@ -26,12 +26,14 @@ class Calculate:
 				pass
 			max_value-=1
 		return int(temp_x), int(temp_y), int(temp_z), result
-		
-	def leastCommon(self, x, y, z):
-		result = 0
-		compare_number = 0
-		while True:
-			compare_number+=1
+
+	def duplicate_list(self, x):
+		check = []
+		for r in x:
+			if r not in check:
+				check.append(r)
+			pass
+		return check
 
 	def factorial(self, x):
 		result = 1
@@ -53,11 +55,80 @@ class Calculate:
 		result.append(temp_x)
 		return result
 	
-	def checkPrimeNumber(self, x):
+	def checkPrimeNumber(self,x):
 		check = self.extractComponent(x)
 		if len(check) <= 2:
-			print(x, "It's prime number")
-		else:
-			print(x, "it's not prime number")
-			
+			return x # if return them self, it's prime number
+		return -1 # if return -1, it's not prime number
+
+	def leastCommon(self, x, y, z):
+		collect = []
+		divider = 1
+		for a in x, y, z:
+			collect.append(a)
+		arrange_list = sorted(collect)
+		length = len(arrange_list)
+		temp_length = length-1
+		length-=1
+		count = 0
+		while arrange_list != [1, 1, 1]:
+			if arrange_list[length]%divider == 0 and self.checkPrimeNumber(divider) == divider:
+				print(arrange_list[length], divider)
+				#if self.checkPrimeNumber(arrange_list[length]) == arrange_list[length]:
+				#	divider=arrange_list[length]
+				
+			else:  
+				pass
+		return	arrange_list
 a = Calculate()
+print(a.leastCommon(42, 68, 32))
+				
+"""		
+	def leastCommon(self, x, y, z): # <= 2
+		resultList = []
+		listNum = []
+		divide_num = 1
+		for a in x, y, z:
+			listNum.append(a)
+		pos = len(listNum)
+		while pos != 0:
+			pos-=1
+			temp = listNum[pos]
+			if self.checkPrimeNumber(listNum[pos]) == -1: # if a number is not a prime number, calculate least common
+				while temp != 1:
+					
+					divide_num+=1
+					if temp%divide_num == 0 and self.checkPrimeNumber(divide_num) != -1:
+						count+=1
+						temp = temp/divide_num # listNum[pos] = listNum[pos]/divide_num
+						if temp != listNum[pos] and divide_num != 1:
+							resultList.append(divide_num)
+							
+					if divide_num >= temp: # reset divide num, when it more than result
+						divide_num = 0
+			else: # if a number is a prime number, append to result list		
+				resultList.append(listNum[pos])
+		return resultList
+
+
+
+
+
+		#extract and combine Result
+		print(resultList)
+		ans = []
+		count = 0
+		check = self.duplicate_list(sorted(resultList,  reverse=True)) # already sort numebr and cleaned number without duplicate, more to less
+		check.pop(check.index(1)) # remove 1 from list		
+		length_clean_list = len(check)
+
+		#r = len(resultList)
+		while length_clean_list != 0:
+			length_clean_list-=1
+			for a in resultList:
+				pass
+						
+		return ans
+
+"""				
+

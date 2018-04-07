@@ -11,7 +11,6 @@ def extractComponent(x):
 	result.append(temp_x)
 	return result
 	
-	
 def checkPrimeNumber(x):
 	check = extractComponent(x)
 	if len(check) <= 2:
@@ -19,13 +18,17 @@ def checkPrimeNumber(x):
 	return -1 # if return -1, it's not prime number
 	
 def leastNum(x, y, z):
-	numSet = []
-	collect = 1
+	numSet = x,y,z
 	temp_num = 1
-	for a in x, y, z:
-		numSet.append(a)
-	length = len(numSet)
-	
+	arrange_list = sorted(numSet)
+	length_list = len(arrange_list)
+		#if a % temp_num == 0 and checkPrimeNumber(temp_num) == temp_num:
+		#	print(a/temp_num)
+		#	temp_num+=1
+
+
+
+	"""
 	while length != 0:
 		pos=length+1
 		length-=1
@@ -46,6 +49,6 @@ def leastNum(x, y, z):
 					break
 				temp_num+=1
 	return collect
-	
+	"""
 print(leastNum(19, 20, 18))
 	
