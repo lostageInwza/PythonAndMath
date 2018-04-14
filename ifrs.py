@@ -68,12 +68,19 @@ class Output(object):
 
 	def genEventBill(self):
 		count = 0
-		print('PERIOD', '','EVENT DATE')
+		money = 300
+		revenue = 200
+		# %-10i : '10' is indent space, 'i' is data type
+		print('%-10s%-15s%-17s%-15s%-15s%-15s' % ('PERIOD', 'EVENT DATE', 'BUSINESS EVENT' ,'CASH FLOW', 'REVENUE', 'DELTA'))
 		while count != self.duration+1:
-			print('T%s %s' % (count, self.startContract))
-			print('T%s' % count)
-			print('T%s' % count)
+			diff = revenue-money
+			print('T%-9s%-19s%-19s%-13s%-12s%-10s' % (count, self.startContract, 'DPR_TRANS', money, revenue, diff))
+			print('T%-9s%-19s%-19s%-13s%-12s%-10s' % (count, self.startContract, 'DPR_TRACC', money, revenue, diff))
+			print('T%-9s%-16s%-22s%-13s%-12s%-10s' % (count, self.startContract, 'DPR_TRACCREV', money, revenue, diff))
+			print('------------------------------------------------------------------------------')
 			count+=1
+			money+=1
+		print("Total : %i" % int(money-1))
 
 
 
@@ -151,11 +158,6 @@ class BillCycle(object):
 				endBill = startBill-1
 		return startBill, endBill, bc_name
 
-
-
-
-
-
 # === not used ===
 	#def basicInform(self):
 	#	day_start, month_start, year_start = BaseFormula.cuttingString(self, self.startContract)
@@ -169,4 +171,3 @@ class BillCycle(object):
 a = Output()
 
 a.showReport()
-input()
