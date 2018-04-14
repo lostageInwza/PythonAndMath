@@ -6,12 +6,12 @@ class Output(object):
 		self.handsetPrice = 32242.99
 		self.handsetDiscount = 4672.90
 		self.packagePrice = 1200.00
-		self.duration = 6
+		self.duration = 12
 
 		# Range bill cycle
 		self.startBill, self.endBill, self.codeCycle = BillCycle.main(self, self.startContract)
 		
-		# A formula what we used many times.
+		# A formula, Group by functions name.
 
 		# Contract Trans Price
 		self.discountAndHandset = round(self.handsetPrice-self.handsetDiscount,2)
@@ -34,38 +34,61 @@ class Output(object):
 		self.revenueCompPackPerMonth = round(self.revenueCompPack / self.duration, 2)
 		self.diffRevenueCompPackPerMonth = round(self.revenueCompPackPerMonth - self.packagePrice, 2)
 
-
 	def scenarioInput(self): 
 		print('**** SCENARIO INPUTS ****')
-		print('Transaction Price: %s | %s | %s' % (self.handsetPrice, self.handsetDiscount, self.packagePrice))
-		print('Standalone Selling Price [SSP]: %s | %s' % (self.handsetPrice, self.packagePrice))
+		#print('Transaction Price | %s | %s | %s' % (self.handsetPrice, self.handsetDiscount, self.packagePrice))
+		#print('Standalone Selling Price [SSP] | %s | %s' % (self.handsetPrice, self.packagePrice))
 		print('Duration Contract: %s' % self.duration)
 		print('Contract Start: %s' % self.startContract)
 		print('Contract End: %s' % self.endContract)
-		print('Bill Cycle %s to %s' % (self.startBill, self.endBill))
+		print('Bill Cycle: %s to %s' % (self.startBill, self.endBill))
 
 	def contractTransactionPrice(self): 
 		print('**** CONTRACT TRANSACTION PRICE and STANDALONE SELLING PRICE ****')
-		print('Transaction Price: %s | %s | %s | \033[4m%s\033[0m' % (self.handsetPrice, self.handsetDiscount*-1, self.totalPackagePrice, round(self.sumTransAllPrice, 2)))
-		print('Total Contract SPP %s | %s | \033[4m%s\033[0m' % (self.handsetPrice, self.totalPackagePrice, round(self.sumTransPrice, 2)))
+		print('Transaction Price: %s | %s | %s | [%s]' % (self.handsetPrice, self.handsetDiscount*-1, self.totalPackagePrice, round(self.sumTransAllPrice, 2)))
+		print('Total Contract SPP: %s | %s | [%s]' % (self.handsetPrice, self.totalPackagePrice, round(self.sumTransPrice, 2)))
 		
 	def allocating(self):
 		print('**** ALLOCATING REVENUE TO COMPONENTS ****')	
-		print('Total Transaction Price %s | %s | %s | \033[4m%s\033[0m' % (self.handsetPrice, self.handsetDiscount*-1, self.totalPackagePrice, round(self.sumTransAllPrice, 2)))
-		print('Total Standalone Selling Price [SPP]: %s | %s | \033[4m%s\033[0m' % (self.handsetPrice, self.totalPackagePrice, round(self.sumTransPrice, 2)))
-		print('Percentage-per Components: %s%% | %s%% | \033[4m%s%%\033[0m' % (self.percentHandset, self.percentPackage, self.sumPercentComp))
-		print('Revenue Allocated to Component: %s | %s | \033[4m%s\033[0m' % (self.revenueCompHand, self.revenueCompPack, self.sumRevenueComp)) # round((a * b) / 100,2)
+		print('Total Transaction Price: %s | %s | %s | [%s]' % (self.handsetPrice, self.handsetDiscount*-1, self.totalPackagePrice, round(self.sumTransAllPrice, 2)))
+		print('Total Standalone Selling Price: [SPP]: %s | %s | [%s]' % (self.handsetPrice, self.totalPackagePrice, round(self.sumTransPrice, 2)))
+		print('Percentage-per Components: %s%% | %s%% | [%s%%]' % (self.percentHandset, self.percentPackage, self.sumPercentComp))
+		print('Revenue Allocated to Component: %s | %s | [%s]' % (self.revenueCompHand, self.revenueCompPack, self.sumRevenueComp)) # round((a * b) / 100,2)
 
 	def calculateContractAsset(self):
 		print('**** CALCULATING THE CONTRACT ASSET - Immediate and Ongoing Events ****')
-		print('Total Cashflow %s | %s | %s | \033[4m%s\033[0m' % (self.handsetPrice, self.handsetDiscount*-1, self.totalPackagePrice, round(self.sumTransAllPrice, 2)))
-		print('Revenue Allocated to Component: %s | %s | \033[4m%s\033[0m' % (self.revenueCompHand, self.revenueCompPack, self.sumRevenueComp))
-		print('Immidate Cashflow %s | %s | \033[4m%s\033[0m' % (self.handsetPrice, self.handsetDiscount*-1, self.sumImmidateHandAndDisc))
-		print('Immediate Revenue %s | \033[4m%s\033[0m' % (self.revenueCompHand,  self.revenueCompHand))
-		print('Immediate Contract Asset %s | %s | \033[4m%s\033[0m' % (self.diffImmidateCashAndRev, self.handsetDiscount, self.sumImmidateContAsset))
-		print('Monthly Cashflow %s | \033[4m%s\033[0m' % (self.packagePrice, self.packagePrice))
-		print('Monthly Revenue %s | \033[4m%s\033[0m' % (self.revenueCompPackPerMonth, self.revenueCompPackPerMonth))
-		print('Monthly Contract Asset %s | \033[4m%s\033[0m' % (self.diffRevenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
+		print('Total Cashflow: %s | %s | %s | [%s]' % (self.handsetPrice, self.handsetDiscount*-1, self.totalPackagePrice, round(self.sumTransAllPrice, 2)))
+		print('Revenue Allocated to Component: %s | %s | [%s]' % (self.revenueCompHand, self.revenueCompPack, self.sumRevenueComp))
+		print('Immidate Cashflow: %s | %s | [%s]' % (self.handsetPrice, self.handsetDiscount*-1, self.sumImmidateHandAndDisc))
+		print('Immediate Revenue: %s | [%s]' % (self.revenueCompHand,  self.revenueCompHand))
+		print('Immediate Contract Asset: %s | %s | [%s]' % (self.diffImmidateCashAndRev, self.handsetDiscount, self.sumImmidateContAsset))
+		print('Monthly Cashflow: %s | [%s]' % (self.packagePrice, self.packagePrice))
+		print('Monthly Revenue: %s | [%s]' % (self.revenueCompPackPerMonth, self.revenueCompPackPerMonth))
+		print('Monthly Contract Asset: %s | [%s]' % (self.diffRevenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
+
+	def genEventBill(self):
+		count = 0
+		print('PERIOD', '','EVENT DATE')
+		while count != self.duration+1:
+			print('T%s %s' % (count, self.startContract))
+			print('T%s' % count)
+			print('T%s' % count)
+			count+=1
+
+
+
+	def showReport(self):
+		a = Output()
+		print('')
+		a.scenarioInput()
+		print('')
+		a.contractTransactionPrice()
+		print('')
+		a.allocating()
+		print('')
+		a.calculateContractAsset()
+		print('')
+		a.genEventBill()
 
 class BaseFormula(object):
 
@@ -130,16 +153,6 @@ class BillCycle(object):
 
 
 
-a = Output()
-print('')
-a.scenarioInput()
-print('')
-a.contractTransactionPrice()
-print('')
-a.allocating()
-print('')
-a.calculateContractAsset()
-print('')
 
 
 
@@ -152,3 +165,8 @@ print('')
 	#	print('Contract Start: %s' % self.startContract)
 	#	print('Contract End: %s' % self.endContract)
 	#	print('Duration Contract: %s' % self.duration)
+
+a = Output()
+
+a.showReport()
+input()
