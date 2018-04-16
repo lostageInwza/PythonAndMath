@@ -1,8 +1,8 @@
 class Output(object):
 
 	def __init__(self):
-		self.startContract = '23/10/2018'
-		self.endContract = '22/10/2019'
+		self.startContract = '04/11/2018'
+		self.endContract = '04/11/2019'
 		self.handsetPrice = 32242.99
 		self.handsetDiscount = 4672.90
 		self.packagePrice = 1200.00
@@ -37,7 +37,7 @@ class Output(object):
 	def scenarioInput(self): 
 		print('**** SCENARIO INPUTS ****')
 		#print('Transaction Price | %s | %s | %s' % (self.handsetPrice, self.handsetDiscount, self.packagePrice))
-		#print('Standalone Selling Price [SSP] | %s | %s' % (self.handsetPrice, self.packagePrice))
+		#print('Standalone Selling Price [SSP] | %s | %s' % (self.handsetPrice, selfx.packagePrice))
 		print('Duration Contract: %s' % self.duration)
 		print('Contract Start: %s' % self.startContract)
 		print('Contract End: %s' % self.endContract)
@@ -67,46 +67,46 @@ class Output(object):
 		print('Monthly Contract Asset: %s | [%s]' % (self.diffRevenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
 
 	def genEventBill(self):
-		period = 0
-		count_period = 0
+		period = 1
 		money = 100000
 		revenue = 30000
-		day, month, year = BaseFormula.cuttingString(self, self.startContract) # start contract date
+		diff = 1
+		
+		startDay, startMonth, startYear = BaseFormula.cuttingString(self, self.startContract) # start contract date
 		endDay, endMonth, endYear = BaseFormula.cuttingString(self, self.endContract) # end contract date
 		startBill, endBill, bc_name = BillCycle.main(self, self.startContract) # bill cycle infrom
-		# %-10i : '10' is indent space, 'i' is data type
-		print('%-10s%-12s%-20s%-16s%-11s%-15s' % ('PERIOD', 'EVENT DATE', 'BUSINESS EVENT' ,'CASH FLOW', 'REVENUE', 'DELTA'))
-		while period != self.duration:
-			period+=1
-			diff = revenue-money
-			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, day, month, year, 'DPR_TRANS', money, revenue, diff)) # actual : 
-			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, day, month, year, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
-			print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, day, month, year, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
+		
+		print('%-10s%-12s%-20s%-16s%-11s%-15s' % ('PERIOD', 'EVENT DATE', 'BUSINESS EVENT' ,'CASH FLOW', 'REVENUE', 'DELTA')) # %-10i : '10' is indent space, 'i' is data type
+		
+		while period != self.duration+1:
+
+			if startMonth == 13:
+				startMonth = 1
+				startYear+=1
+			
+			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRANS', money, revenue, diff)) # actual : 
+			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
+			print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
 			print('------------------------------------------------------------------------------')
-			if month == endMonth and year == endYear:
-				print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, endDay, month, year, 'DPR_TRANS', money, revenue, diff)) # actual : 
-				print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, endDay, month, year, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
-				print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, endDay, month, year, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
-				print('------------------------------------------------------------------------------')
-			if month == 12:
-				month=0
-				year+=1
-			if day != endBill:
-				day = endBill
-				period =0
-			#if period == self.duration:
-			#	if day != endBill:
-			#		print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, endBill, month+1, year, 'DPR_TRANS', money, revenue, diff)) # actual : 
-			#		print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, endBill, month+1, year, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
-			#		print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, endBill, month+1, year, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
-			#		print('------------------------------------------------------------------------------')
-			month+=1
+			
+			if period == self.duration and startDay < endDay: # if period equal duration and startContact is less than endDay
+				startMonth-=1
+				startDay=endDay
+				period-=1
+				
+			
+			if period == 1 and startDay != endBill: # if first period by startContract not equal endBill(pay date)
+				startDay = endBill
+				period = 0
+
+			period+=1
+			startMonth+=1
+			
+			
+			#if bc_name == 'BC18':
+			#	startDay = BaseFormula.checkMonth(self, startMonth, startYear)
+
 		print("Total : %i" % int(money-1))
-		
-
-		
-
-
 
 	def showReport(self):
 		a = Output()
@@ -126,16 +126,6 @@ class BaseFormula(object):
 	def cuttingString(self, a):
   		return int(a[0:2]), int(a[3:5]), int(a[6:10]) # a, b, c
 
-	def checkMonth(self ,month, year):
-		if month in (1, 3, 5, 7, 8, 10, 12):
-			return 31
-		elif month in (4, 6, 9, 11):
-			return 30
-		else:
-	   		if month == 2 and self.checkYear(year) == 366:
-	   			return 29
-	   		return 28
-
 	def checkYear(self, year):
 		if year%4 != 0:
   			return 365
@@ -146,7 +136,18 @@ class BaseFormula(object):
 		else:
   			return 366
 
-	
+	def checkMonth(self ,month, year):
+		if month in (1, 3, 5, 7, 8, 10, 12):
+			return 31
+		elif month in (4, 6, 9, 11):
+			return 30
+		else:
+	   		if month == 2:
+	   			a = BaseFormula.checkYear(self, year)
+	   			if month == 2 and a == 366:
+	   				return 29
+	   			return 28
+
 class BillCycle(object):
 	
 	def main(self, date):
@@ -175,7 +176,7 @@ class BillCycle(object):
 			elif day in range(28, BaseFormula.checkMonth(self, month, year)+1): # 28, end_month
 				startBill = 28
 				bc_name = 'BC17'
-			elif day in range(1, 5):
+			elif day in range(1, 6):
 				startBill = 1
 				endBill = BaseFormula.checkMonth(self, month, year)
 				bc_name = 'BC18'
@@ -186,6 +187,9 @@ class BillCycle(object):
 a = Output()
 
 a.showReport()
+
+
+
 
 # === not used ===
 	#def basicInform(self):
@@ -219,3 +223,7 @@ a.showReport()
 			#period+=1
 			#money+=1
 		
+	#print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, endDay, startMonth, startYear, 'DPR_TRANS', money, revenue, diff)) # actual : 
+				#print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, endDay, startMonth, startYear, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
+				#print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, endDay, startMonth, startYear, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
+				#print('------------------------------------------------------------------------------')
