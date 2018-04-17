@@ -1,8 +1,13 @@
 class Output(object):
 
 	def __init__(self):
+<<<<<<< HEAD
 		self.startContract = '09/10/2017'
 		self.endContract = '08/10/2018'
+=======
+		self.startContract = '04/11/2018'
+		self.endContract = '04/11/2019'
+>>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
 		self.handsetPrice = 32242.99
 		self.handsetDiscount = 4672.90
 		self.packagePrice = 599.00
@@ -74,6 +79,7 @@ class Output(object):
 		money = 100000
 		revenue = 30000
 		diff = 1
+<<<<<<< HEAD
 		count = 0
 		listDate = []
 		tmp = ''
@@ -82,6 +88,12 @@ class Output(object):
 		startDay, startMonth, startYear = self.base_formula.cuttingString(self.startContract) # start contract date
 		endDay, endMonth, endYear = self.base_formula.cuttingString(self.endContract) # end contract date
 		startBill, endBill, bc_name = self.bill_cycle.main(self.startContract) # bill cycle infrom
+=======
+		
+		startDay, startMonth, startYear = BaseFormula.cuttingString(self, self.startContract) # start contract date
+		endDay, endMonth, endYear = BaseFormula.cuttingString(self, self.endContract) # end contract date
+		startBill, endBill, bc_name = BillCycle.main(self, self.startContract) # bill cycle infrom
+>>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
 		
 		print('%-10s%-12s%-20s%-16s%-11s%-15s' % ('PERIOD', 'EVENT DATE', 'BUSINESS EVENT' ,'CASH FLOW', 'REVENUE', 'DELTA')) # %-10i : '10' is indent space, 'i' is data type
 		
@@ -90,6 +102,7 @@ class Output(object):
 			if startMonth == 13:
 				startMonth = 1
 				startYear+=1
+<<<<<<< HEAD
 						
 			#accrued 
 			accured_value = self.bill_cycle.calculateAccured(endBill, startDay, startMonth, startYear, self.packagePrice)
@@ -121,16 +134,28 @@ class Output(object):
 			monthLastMonth = startMonth
 			yearLastMonth = startYear
 
+=======
+			
+			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRANS', money, revenue, diff)) # actual : 
+			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
+			print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
+			print('------------------------------------------------------------------------------')
+			
+>>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
 			if period == self.duration and startDay < endDay: # if period equal duration and startContact is less than endDay
 				startMonth-=1
 				startDay=endDay
 				period-=1
 				
+<<<<<<< HEAD
 				
+=======
+>>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
 			
 			if period == 1 and startDay != endBill: # if first period by startContract not equal endBill(pay date)
 				startDay = endBill
 				period = 0
+<<<<<<< HEAD
 				count+=1
 
 			period+=1
@@ -142,6 +167,17 @@ class Output(object):
 			#	startDay = BaseFormula.checkMonth(self, startMonth, startYear)
 
 		#print("Total : %i" % int(money-1))
+=======
+
+			period+=1
+			startMonth+=1
+			
+			
+			#if bc_name == 'BC18':
+			#	startDay = BaseFormula.checkMonth(self, startMonth, startYear)
+
+		print("Total : %i" % int(money-1))
+>>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
 
 	def showReport(self):
 		a = Output()
@@ -164,6 +200,7 @@ class BaseFormula(object):
 
 	def cuttingString(self, a):
   		return int(a[0:2]), int(a[3:5]), int(a[6:10]) # a, b, c
+<<<<<<< HEAD
 
   	def combineToFullDate(self, a, b, c):
   		a = str(a)
@@ -175,6 +212,8 @@ class BaseFormula(object):
   		if len(b) == 1:
   			b = '0'+str(b)
   		return a + '/' + b + '/' + c
+=======
+>>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
 
 	def checkYear(self, year):
 		if year%4 != 0:
@@ -193,6 +232,7 @@ class BaseFormula(object):
 			return 30
 		else:
 	   		if month == 2:
+<<<<<<< HEAD
 	   			a = self.checkYear(year)
 	   			if month == 2 and a == 366:
 	   				return 29
@@ -213,6 +253,12 @@ class BaseFormula(object):
 	    day1+=1
 	    count+=1
 
+=======
+	   			a = BaseFormula.checkYear(self, year)
+	   			if month == 2 and a == 366:
+	   				return 29
+	   			return 28
+>>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
 
 class BillCycle(object):
 
@@ -276,6 +322,7 @@ class BillCycle(object):
 				endBill = startBill-1
 		return startBill, endBill, bc_name
 
+<<<<<<< HEAD
 	
 
 #b = BillCycle()
@@ -286,3 +333,48 @@ class BillCycle(object):
 
 a = Output()
 a.showReport()
+=======
+a = Output()
+
+a.showReport()
+
+
+
+
+# === not used ===
+	#def basicInform(self):
+	#	day_start, month_start, year_start = BaseFormula.cuttingString(self, self.startContract)
+	#	day_end, month_end, year_end = BaseFormula.cuttingString(self, self.startContract)
+	#	daysInMonth = BaseFormula.checkMonth(self, month_start, year_start)
+	#	checkCycle = BillCycle.main(self, self.startContract)
+	#	print('Contract Start: %s' % self.startContract)
+	#	print('Contract End: %s' % self.endContract)
+	#	print('Duration Contract: %s' % self.duration)
+
+	#while period != self.duration+1:
+			#if month == 13:
+			#	month=1
+			#	year+=1
+			#if period != 1:
+			#	day = endBill
+			#if period == self.duration:
+
+			#if count_period < 2:
+			#	period=1
+			#else:
+			#	day = endBill
+			#diff = revenue-money
+			#print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, day, month, year, 'DPR_TRANS', money, revenue, diff)) # actual : 
+			#print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, day, month, year, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
+			#print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, day, month, year, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
+			#print('------------------------------------------------------------------------------')
+			#month+=1
+			#count_period+=1
+			#period+=1
+			#money+=1
+		
+	#print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, endDay, startMonth, startYear, 'DPR_TRANS', money, revenue, diff)) # actual : 
+				#print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, endDay, startMonth, startYear, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
+				#print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, endDay, startMonth, startYear, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
+				#print('------------------------------------------------------------------------------')
+>>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
