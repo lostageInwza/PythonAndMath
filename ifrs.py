@@ -1,13 +1,8 @@
 class Output(object):
 
 	def __init__(self):
-<<<<<<< HEAD
 		self.startContract = '09/10/2017'
 		self.endContract = '08/10/2018'
-=======
-		self.startContract = '04/11/2018'
-		self.endContract = '04/11/2019'
->>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
 		self.handsetPrice = 32242.99
 		self.handsetDiscount = 4672.90
 		self.packagePrice = 599.00
@@ -79,21 +74,14 @@ class Output(object):
 		money = 100000
 		revenue = 30000
 		diff = 1
-<<<<<<< HEAD
-		count = 0
+		count = 1
 		listDate = []
 		tmp = ''
-		pre_actual = ''
 		
 		startDay, startMonth, startYear = self.base_formula.cuttingString(self.startContract) # start contract date
 		endDay, endMonth, endYear = self.base_formula.cuttingString(self.endContract) # end contract date
 		startBill, endBill, bc_name = self.bill_cycle.main(self.startContract) # bill cycle infrom
-=======
-		
-		startDay, startMonth, startYear = BaseFormula.cuttingString(self, self.startContract) # start contract date
-		endDay, endMonth, endYear = BaseFormula.cuttingString(self, self.endContract) # end contract date
-		startBill, endBill, bc_name = BillCycle.main(self, self.startContract) # bill cycle infrom
->>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
+
 		
 		print('%-10s%-12s%-20s%-16s%-11s%-15s' % ('PERIOD', 'EVENT DATE', 'BUSINESS EVENT' ,'CASH FLOW', 'REVENUE', 'DELTA')) # %-10i : '10' is indent space, 'i' is data type
 		
@@ -102,82 +90,53 @@ class Output(object):
 			if startMonth == 13:
 				startMonth = 1
 				startYear+=1
-<<<<<<< HEAD
 						
-			#accrued 
 			accured_value = self.bill_cycle.calculateAccured(endBill, startDay, startMonth, startYear, self.packagePrice)
 
-			#actual
+			##actual
 			nowFullDate = self.base_formula.combineToFullDate(startDay, startMonth, startYear)
 			listDate.append(nowFullDate)
+
+			print(listDate)
+
 			if count > 1:
 				tmp = listDate[0], listDate[1]
 				listDate.pop(0)	
 			
 			if period >= 12:
 				accured_value = 0
-				actual_value = 0
-
-			if tmp:
-				convert_tmp = list(tmp)
-				actual_value = self.bill_cycle.calculateActual(endBill, convert_tmp[0], convert_tmp[1], self.packagePrice)
-
-
-
-				print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRANS', actual_value, revenue, diff)) # actual : 
-				print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACC', accured_value, revenue, diff)) # 
-				print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACCREV', 1, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
-				print('------------------------------------------------------------------------------')
-
-
-			dayLastMonth = startDay
-			monthLastMonth = startMonth
-			yearLastMonth = startYear
-
-=======
 			
-			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRANS', money, revenue, diff)) # actual : 
-			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
+			#
+			#if tmp:
+			#	convert_tmp = list(tmp)
+			#	actual_value = self.bill_cycle.calculateActual(endBill, convert_tmp[0], convert_tmp[1], self.packagePrice)
+
+			if count == 1:
+				actual_value = 0
+			actual_value = 10
+			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRANS', actual_value, revenue, diff)) # actual : 
+			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACC', accured_value, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
 			print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
 			print('------------------------------------------------------------------------------')
-			
->>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
+
 			if period == self.duration and startDay < endDay: # if period equal duration and startContact is less than endDay
 				startMonth-=1
 				startDay=endDay
 				period-=1
-				
-<<<<<<< HEAD
-				
-=======
->>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
-			
+
 			if period == 1 and startDay != endBill: # if first period by startContract not equal endBill(pay date)
 				startDay = endBill
 				period = 0
-<<<<<<< HEAD
-				count+=1
+
 
 			period+=1
 			startMonth+=1
 			count+=1
+		
 			
-			
-			#if bc_name == 'BC18':
-			#	startDay = BaseFormula.checkMonth(self, startMonth, startYear)
-
-		#print("Total : %i" % int(money-1))
-=======
-
-			period+=1
-			startMonth+=1
-			
-			
-			#if bc_name == 'BC18':
-			#	startDay = BaseFormula.checkMonth(self, startMonth, startYear)
-
+	
 		print("Total : %i" % int(money-1))
->>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
+
 
 	def showReport(self):
 		a = Output()
@@ -200,9 +159,8 @@ class BaseFormula(object):
 
 	def cuttingString(self, a):
   		return int(a[0:2]), int(a[3:5]), int(a[6:10]) # a, b, c
-<<<<<<< HEAD
-
-  	def combineToFullDate(self, a, b, c):
+	
+	def combineToFullDate(self, a, b, c):
   		a = str(a)
   		b = str(b)
   		c = str(c)
@@ -212,8 +170,7 @@ class BaseFormula(object):
   		if len(b) == 1:
   			b = '0'+str(b)
   		return a + '/' + b + '/' + c
-=======
->>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
+
 
 	def checkYear(self, year):
 		if year%4 != 0:
@@ -232,7 +189,6 @@ class BaseFormula(object):
 			return 30
 		else:
 	   		if month == 2:
-<<<<<<< HEAD
 	   			a = self.checkYear(year)
 	   			if month == 2 and a == 366:
 	   				return 29
@@ -242,30 +198,25 @@ class BaseFormula(object):
 	  count = 0
 	  while True:
 	    if day1 == day2 and month1 == month2 and year1 == year2:
-	      return count
+	      	return count
 	    if self.checkMonth(month1, year1) == day1:
-	      day1=1
-	      month1+=1
-	      count+=1
+	      	day1=1
+	      	month1+=1
+	      	count+=1
 	    if month1 == 13:
-	      month1=1
-	      year1+=1
-	    day1+=1
-	    count+=1
+	    	month1=1
+	    	year1+=1
 
-=======
-	   			a = BaseFormula.checkYear(self, year)
-	   			if month == 2 and a == 366:
-	   				return 29
-	   			return 28
->>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
+	    	day1+=1
+	    	count+=1
+
 
 class BillCycle(object):
 
 	def __init__(self):
 		self.base_formula = BaseFormula()
 
-   	def calculateAccured(self, bill_day, day, month, year, package_price):
+	def calculateAccured(self, bill_day, day, month, year, package_price):
 		#accrued : (daysInMonth-nowDay + 1)/daysInMonth * package_price
 		daysInMonth = int(self.base_formula.checkMonth(month, year))
 		if day != bill_day:
@@ -277,16 +228,12 @@ class BillCycle(object):
 	def calculateActual(self, bill_day, lastDate, nowDate ,package_price):
 		start_day, start_month, start_year = self.base_formula.cuttingString(lastDate)
 		now_day, now_month, now_year = self.base_formula.cuttingString(nowDate)
-
 		daysInLastMonth = self.base_formula.checkMonth(start_month, start_year) # total days in last month
 		range_date = self.base_formula.distanceDate(start_day, start_month, start_year, now_day, now_month, now_year)
-		#print(range_date+1, daysInLastMonth)
 		actual = float((round(range_date+1,2))/daysInLastMonth)*package_price
 		return actual
 
-		#billDateLastMonth = self.base_formula.combineToFullDate(startDay, start_month, start_year)
-		#billDateNowMonth = self.base_formula.combineToFullDate(now_day, now_month, now_year)
-		#actual : (billDateLastMonth - billDateNowMonth)/daysInLastMonth * package_price
+	
 		
 	def main(self, date):
 		day, month, year = self.base_formula.cuttingString(date)
@@ -322,59 +269,10 @@ class BillCycle(object):
 				endBill = startBill-1
 		return startBill, endBill, bc_name
 
-<<<<<<< HEAD
-	
 
-#b = BillCycle()
-#print(b.calculateThreeValue('09/10/2016', 599))
 
-#b = BaseFormula()
-#print(b.combineToFullDate(9, 12, 2017))
-
-a = Output()
-a.showReport()
-=======
 a = Output()
 
 a.showReport()
 
 
-
-
-# === not used ===
-	#def basicInform(self):
-	#	day_start, month_start, year_start = BaseFormula.cuttingString(self, self.startContract)
-	#	day_end, month_end, year_end = BaseFormula.cuttingString(self, self.startContract)
-	#	daysInMonth = BaseFormula.checkMonth(self, month_start, year_start)
-	#	checkCycle = BillCycle.main(self, self.startContract)
-	#	print('Contract Start: %s' % self.startContract)
-	#	print('Contract End: %s' % self.endContract)
-	#	print('Duration Contract: %s' % self.duration)
-
-	#while period != self.duration+1:
-			#if month == 13:
-			#	month=1
-			#	year+=1
-			#if period != 1:
-			#	day = endBill
-			#if period == self.duration:
-
-			#if count_period < 2:
-			#	period=1
-			#else:
-			#	day = endBill
-			#diff = revenue-money
-			#print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, day, month, year, 'DPR_TRANS', money, revenue, diff)) # actual : 
-			#print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, day, month, year, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
-			#print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, day, month, year, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
-			#print('------------------------------------------------------------------------------')
-			#month+=1
-			#count_period+=1
-			#period+=1
-			#money+=1
-		
-	#print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, endDay, startMonth, startYear, 'DPR_TRANS', money, revenue, diff)) # actual : 
-				#print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, endDay, startMonth, startYear, 'DPR_TRACC', money, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
-				#print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, endDay, startMonth, startYear, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
-				#print('------------------------------------------------------------------------------')
->>>>>>> 6a7bf88aa94a89f8013be665c1ec784a8cead0bf
