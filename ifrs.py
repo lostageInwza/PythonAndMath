@@ -106,14 +106,15 @@ class Output(object):
 			if period >= 12:
 				accured_value = 0
 			
-			#
-			#if tmp:
-			#	convert_tmp = list(tmp)
-			#	actual_value = self.bill_cycle.calculateActual(endBill, convert_tmp[0], convert_tmp[1], self.packagePrice)
+			
+			if tmp:
+				convert_tmp = list(tmp)
+				actual_values = self.bill_cycle.calculateActual(endBill, convert_tmp[0], convert_tmp[1], self.packagePrice)
 
 			if count == 1:
 				actual_value = 0
-			actual_value = 10
+			if count != 1:
+				actual_value = round(actual_values, 2)
 			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRANS', actual_value, revenue, diff)) # actual : 
 			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACC', accured_value, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
 			print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
@@ -207,8 +208,8 @@ class BaseFormula(object):
 	    	month1=1
 	    	year1+=1
 
-	    	day1+=1
-	    	count+=1
+	    day1+=1
+	    count+=1
 
 
 class BillCycle(object):
@@ -229,6 +230,7 @@ class BillCycle(object):
 		start_day, start_month, start_year = self.base_formula.cuttingString(lastDate)
 		now_day, now_month, now_year = self.base_formula.cuttingString(nowDate)
 		daysInLastMonth = self.base_formula.checkMonth(start_month, start_year) # total days in last month
+		print(daysInLastMonth, 'flag', start_month)
 		range_date = self.base_formula.distanceDate(start_day, start_month, start_year, now_day, now_month, now_year)
 		actual = float((round(range_date+1,2))/daysInLastMonth)*package_price
 		return actual
