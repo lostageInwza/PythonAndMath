@@ -71,8 +71,8 @@ class Output(object):
 
 	def genEventBill(self):
 		period = 1
-		money = 100000
-		revenue = 30000
+		money = '-'
+		revenue = '-'
 		diff = 1
 		count = 1
 		listDate = []
@@ -96,9 +96,7 @@ class Output(object):
 			##actual
 			nowFullDate = self.base_formula.combineToFullDate(startDay, startMonth, startYear)
 			listDate.append(nowFullDate)
-
-			print(listDate)
-
+			
 			if count > 1:
 				tmp = listDate[0], listDate[1]
 				listDate.pop(0)	
@@ -109,12 +107,16 @@ class Output(object):
 			
 			if tmp:
 				convert_tmp = list(tmp)
-				actual_values = self.bill_cycle.calculateActual(endBill, convert_tmp[0], convert_tmp[1], self.packagePrice)
-
+				actual_value_not_full, actual_value_full = self.bill_cycle.calculateActual(endBill, convert_tmp[0], convert_tmp[1], self.packagePrice)
+				
 			if count == 1:
 				actual_value = 0
 			if count != 1:
-				actual_value = round(actual_values, 2)
+			  if period == 1:
+			    actual_value = round(actual_value_not_full, 2)
+			  else:
+				  actual_value = round(actual_value_full, 2)
+				
 			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRANS', actual_value, revenue, diff)) # actual : 
 			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACC', accured_value, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
 			print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACCREV', money, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
@@ -136,7 +138,7 @@ class Output(object):
 		
 			
 	
-		print("Total : %i" % int(money-1))
+		#print("Total : %i" % int(money-1))
 
 
 	def showReport(self):
@@ -153,9 +155,6 @@ class Output(object):
 		a.genEventBill()
 
 
-
-
-
 class BaseFormula(object):
 
 	def cuttingString(self, a):
@@ -165,7 +164,6 @@ class BaseFormula(object):
   		a = str(a)
   		b = str(b)
   		c = str(c)
-
   		if len(a) == 1:
   			a = '0'+str(a)
   		if len(b) == 1:
@@ -199,7 +197,7 @@ class BaseFormula(object):
 	  count = 0
 	  while True:
 	    if day1 == day2 and month1 == month2 and year1 == year2:
-	      	return count
+	        return count
 	    if self.checkMonth(month1, year1) == day1:
 	      	day1=1
 	      	month1+=1
@@ -227,13 +225,15 @@ class BillCycle(object):
 		return accured
 
 	def calculateActual(self, bill_day, lastDate, nowDate ,package_price):
-		start_day, start_month, start_year = self.base_formula.cuttingString(lastDate)
-		now_day, now_month, now_year = self.base_formula.cuttingString(nowDate)
+		start_day, start_month, start_year = self.base_formula.cuttingString(lastDate) # lastmonth date
+		now_day, now_month, now_year = self.base_formula.cuttingString(nowDate) # now date
+
 		daysInLastMonth = self.base_formula.checkMonth(start_month, start_year) # total days in last month
-		print(daysInLastMonth, 'flag', start_month)
 		range_date = self.base_formula.distanceDate(start_day, start_month, start_year, now_day, now_month, now_year)
-		actual = float((round(range_date+1,2))/daysInLastMonth)*package_price
-		return actual
+		#print(float(range_date)-1)
+		actual_not_full_month = float((round(range_date+1,2))/daysInLastMonth)*package_price
+		actual_full_month = float((round(range_date,2))/daysInLastMonth)*package_price
+		return actual_not_full_month, actual_full_month
 
 	
 		
@@ -276,5 +276,3 @@ class BillCycle(object):
 a = Output()
 
 a.showReport()
-
-
