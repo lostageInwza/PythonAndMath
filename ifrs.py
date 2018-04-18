@@ -4,14 +4,18 @@ class Output(object):
 	def __init__(self):
 		self.bill_cycle = BillCycle() # inhert class
 		self.base_formula = BaseFormula()
-		self.startContract = '09/01/2017'
-		self.endContract = '09/12/2019'
+		self.startContract = '09/10/2017'
+		self.endContract = '08/10/2018'
 		self.handsetPrice = 32242.99
 		self.handsetDiscount = 4672.90
 		self.packagePrice = 599.00
+		
+		#bill cycle infrom
+		self.bill_from, self.bill_to, self.bc_type = self.bill_cycle.main(self.startContract)
+		# duration : calculate from range betwenn
 		day1, month1, year1 = self.base_formula.cuttingString(self.startContract)
 		day2, month2, year2 = self.base_formula.cuttingString(self.endContract)
-		self.duration = self.base_formula.collectTotalMonth(month1, month2)
+		self.duration = self.base_formula.collectTotalMonth(month1, year1, month2, year2)
 
 		# Range bill cycle
 		self.startBill, self.endBill, self.codeCycle = self.bill_cycle.main(self.startContract)
@@ -41,8 +45,6 @@ class Output(object):
 
 	def scenarioInput(self): 
 		print('**** SCENARIO INPUTS ****')
-		#print('Transaction Price | %s | %s | %s' % (self.handsetPrice, self.handsetDiscount, self.packagePrice))
-		#print('Standalone Selling Price [SSP] | %s | %s' % (self.handsetPrice, selfx.packagePrice))
 		print('Duration Contract: %s' % self.duration)
 		print('Contract Start: %s' % self.startContract)
 		print('Contract End: %s' % self.endContract)
@@ -72,10 +74,52 @@ class Output(object):
 		print('Monthly Contract Asset: %s | [%s]' % (self.diffRevenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
 
 	def genEventBill(self):
-		count = 0
-		while self.duration != count:
-			print(self.duration)
-			self.duration-=1
+		period = 1
+		actual_value = 0 # real usage value
+		accured_value = 0 # estimate usage value
+		reverse_accured_value = 0 # 
+
+		rev_actual_value = 0
+		rev_accured_value = 0
+		rev_reverse_accured_value = 0
+
+		diff_value = 0
+
+		trans_day, trans_month, trans_year = self.base_formula.cuttingString(self.startContract)
+		end_trans_day, end_trans_month, end_trans_year = self.base_formula.cuttingString(self.endContract)
+		
+		print('%-10s%-12s%-20s%-16s%-11s%-15s' % ('PERIOD', 'EVENT DATE', 'BUSINESS EVENT' ,'CASH FLOW', 'REVENUE', 'DELTA')) # %-10i : '10' is indent space, 'i' is data type
+
+		while self.duration+1 != period:
+
+			if trans_month == 13: # change years when month value is over than 12
+				trans_month = 1
+				trans_year += 1
+			
+			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, trans_day, trans_month, trans_year, 'DPR_TRANS', actual_value, rev_actual_value, diff_value)) # actual : 
+			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, trans_day, trans_month, trans_year, 'DPR_TRACC', accured_value, rev_accured_value, diff_value)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
+			print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, trans_day, trans_month, trans_year, 'DPR_TRACCREV', reverse_accured_value, rev_reverse_accured_value, diff_value)) # reverse-acclue : acclue in lastmonth with negative value 
+			print('------------------------------------------------------------------------------')
+
+			if period == 1 and trans_day not in (self.bill_to, self.bill_from): # if transaction day not like bill_cycle from or to transction day value is bill_to, if transaction day is bill from, it's okay do nothing whith that (not include BC11 case)
+				if self.codeCycle == 'BC11': # if bill cycle code is 'BC11', transaction day will renew to bill from
+					trans_day = self.bill_from
+				else: 
+					trans_day = self.bill_to
+				period-=1
+
+			if period == self.duration and trans_day != end_trans_day: # if periopd is equal to duration contract
+				if end_trans_day < trans_day:
+					trans_day = end_trans_day
+					trans_month-=1
+				#	trans_month+=1
+				trans_day = end_trans_day
+				period-=1
+
+
+			#main loop
+			period+=1
+			trans_month+=1
 
 	def showReport(self):
 		a = Output()
@@ -148,15 +192,14 @@ class BaseFormula(object):
 	def collectTotalMonth(self,  month1, year1, month2, year2):
 		result_list = []
 		while True:
-			print(month1, year1)
+			result_list.append(month1)
 			month1+=1
 			if month1 == 13:
 				month1=1
 				year1+=1
-			if year1 == year2 and month1 == month2+1:
-				break
-				
-			
+			if year1 == year2 and month1 == month2:
+				return len(result_list)
+
 		#return result_list
 
 
@@ -217,12 +260,12 @@ class BillCycle(object):
 		return startBill, endBill, bc_name
 
 
-a = BaseFormula()
+#a = BaseFormula()
 #print(a.collectTotalMonth(1, 6, 2017, 2019))
-a.collectTotalMonth(1, 2016, 1, 2017)
+#print(len(a.collectTotalMonth(1, 2016, 1, 2018)))
 
-#a = Output()
-#a.showReport()
+a = Output()
+a.showReport()
 # ========== not used ==========
 
 """period = 1
