@@ -4,8 +4,8 @@ class Output(object):
 	def __init__(self):
 		self.bill_cycle = BillCycle() # inhert class
 		self.base_formula = BaseFormula()
-		self.startContract = '09/10/2017'
-		self.endContract = '09/10/2018'
+		self.startContract = '09/01/2017'
+		self.endContract = '09/12/2019'
 		self.handsetPrice = 32242.99
 		self.handsetDiscount = 4672.90
 		self.packagePrice = 599.00
@@ -72,7 +72,10 @@ class Output(object):
 		print('Monthly Contract Asset: %s | [%s]' % (self.diffRevenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
 
 	def genEventBill(self):
-		pass
+		count = 0
+		while self.duration != count:
+			print(self.duration)
+			self.duration-=1
 
 	def showReport(self):
 		a = Output()
@@ -86,7 +89,6 @@ class Output(object):
 		a.calculateContractAsset()
 		print('')
 		a.genEventBill()
-
 
 class BaseFormula(object):
 
@@ -102,7 +104,6 @@ class BaseFormula(object):
   		if len(b) == 1:
   			b = '0'+str(b)
   		return a + '/' + b + '/' + c
-
 
 	def checkYear(self, year):
 		if year%4 != 0:
@@ -143,12 +144,20 @@ class BaseFormula(object):
 
 	#def calculateDuration(self, day1, month1, year1, day2, month2, year2):
 	#	result = self.distanceDate(day1, month1, year1, day2, month2, year2)
-	def collectTotalMonth(self, month1, month2):
+
+	def collectTotalMonth(self,  month1, year1, month2, year2):
 		result_list = []
-		while month1 != month2+1:
-			result_list.append(month1)
+		while True:
+			print(month1, year1)
 			month1+=1
-		return len(result_list)
+			if month1 == 13:
+				month1=1
+				year1+=1
+			if year1 == year2 and month1 == month2+1:
+				break
+				
+			
+		#return result_list
 
 
 class BillCycle(object):
@@ -208,13 +217,12 @@ class BillCycle(object):
 		return startBill, endBill, bc_name
 
 
-#a = BaseFormula()
-#print(a.collectTotalMonth(1, 6))
+a = BaseFormula()
+#print(a.collectTotalMonth(1, 6, 2017, 2019))
+a.collectTotalMonth(1, 2016, 1, 2017)
 
 #a = Output()
-
 #a.showReport()
-
 # ========== not used ==========
 
 """period = 1
