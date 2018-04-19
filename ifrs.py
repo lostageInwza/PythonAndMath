@@ -1,6 +1,7 @@
 #support Case1, Case10
 
 #make every number to decimal 2 points
+
 class Output(object):
 
 	def __init__(self):
@@ -10,7 +11,7 @@ class Output(object):
 		self.endContract = '14/09/2018'
 		self.handsetPrice = 24766.36
 		self.handsetDiscount = -1769.16
-		self.specialDiscount = -500 # Case 10
+		self.specialDiscount = -500.00 # Case 10
 		self.packagePrice = 500.00
 		
 		#bill cycle infrom
@@ -42,7 +43,7 @@ class Output(object):
 		# Contract Asset
 		self.sumImmidateHandAndDisc = round(self.handsetPrice + self.handsetDiscount, 2) # sum of handset and discount handset
 		self.diffImmidateCashAndRev = round(self.revenueCompHand-self.handsetPrice, 2)
-		self.sumImmidateContAsset = round(self.diffImmidateCashAndRev + self.handsetDiscount + self.specialDiscount, 2)
+		self.sumImmidateContAsset = round(self.diffImmidateCashAndRev + (self.handsetDiscount*-1) + (self.specialDiscount*-1), 2)
 		self.revenueCompPackPerMonth = round(self.revenueCompPack / self.duration, 2)
 		self.diffRevenueCompPackPerMonth = round(self.revenueCompPackPerMonth - self.packagePrice, 2)
 
@@ -53,7 +54,7 @@ class Output(object):
 		print('Contract End: %s' % self.endContract)
 		print('Bill Cycle: %s to %s' % (self.startBill, self.endBill))
 
-	def contractTransactionPrice(self): 
+	def contractTransactionPrice(self):
 		print('*** CONTRACT TRANSACTION PRICE and STANDALONE SELLING PRICE ***')
 		print('-'*63)	
 		print('%-25s%-20s%-20s' % ('Component', 'Transcation Price', 'Total Contract'))
@@ -61,9 +62,10 @@ class Output(object):
 		print('%-36s%-17s%s' % ('Service Plan', self.totalPackagePrice, self.totalPackagePrice))
 		print('%-34s%-17s%s' % ('Handset', self.handsetPrice, self.handsetPrice))
 		print('%-34s%-24s%s' % ('Normal Discount', self.handsetDiscount, 0))
-		print('%-38s%-20s%s' % ('Special Discount', self.specialDiscount, 0))
+		if self.specialDiscount != 0:
+			print('%-38s%-20s%s' % ('Special Discount', self.specialDiscount, 0))
 		print('-'*63)
-		print('%-35s%-16s%s' % ('Total', round(self.sumTransAllPrice,2), self.sumTransPrice))
+		print('%-35s%-16s%s' % ('Total', round(self.sumTransAllPrice,2), round(self.sumTransPrice, 2)))
 		print('-'*63)
 
 	def allocating(self):
@@ -74,9 +76,10 @@ class Output(object):
 		print('%-38s%-35s%-33s%-s%-30s%s' % ('Service Plan', self.totalPackagePrice, self.totalPackagePrice, self.percentPackage,'%', self.revenueCompPack))
 		print('%-36s%-35s%-35s%s%-29s%s' % ('Handset', self.handsetPrice, self.handsetPrice, self.percentHandset, '%', self.revenueCompHand))
 		print('%-36s%-40s%-31s%-37s%s' % ('Normal Discount', self.handsetDiscount, 0.00, 0.00, 0.00))
-		print('%-40s%-36s%-31s%-37s%s' % ('Special Discount', self.specialDiscount, 0.00, 0.00, 0.00))
+		if self.specialDiscount != 0:
+			print('%-40s%-36s%-31s%-37s%s' % ('Special Discount', self.specialDiscount, 0.00, 0.00, 0.00))
 		print('-'*150)
-		print('%-37s%-34s%-35s%-s%-30s%s' % ('Total', round(self.sumTransAllPrice,2), self.sumTransPrice, self.sumPercentComp, '%', self.sumRevenueComp))
+		print('%-37s%-34s%-35s%-s%-30s%s' % ('Total', round(self.sumTransAllPrice,2), round(self.sumTransPrice,2), self.sumPercentComp, '%', self.sumRevenueComp))
 		print('-'*150)
 
 
@@ -85,10 +88,11 @@ class Output(object):
 		print('-'*211)
 		print('%-17s%-21s%-35s%-23s%-23s%-30s%-20s%-20s%s' %('Component','Total Cashflow', 'Revenue Allocated to Component', 'Immidate Cashflow', 'Immediate Revenue', 'Immediate Contract Assets', 'Monthly Cashflow', 'Monthly Revenue', 'Monthly Contract Asset'))
 		print('-'*211)
-		print('%-25s%-35s%-29s%-23s%-31s%-15s%-20s%-26s%s' % ('Service Plan', self.totalPackagePrice, self.revenueCompPack,0 ,0 ,0, self.packagePrice, self.revenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
-		print('%-23s%-36s%-23s%-23s%-31s%-26s%-20s%-26s%s' % ('Handset', self.handsetPrice, self.revenueCompHand, self.handsetPrice, self.revenueCompHand, self.diffImmidateCashAndRev,0 ,0 ,0))
-		print('%-24s%-42s%-20s' % ('Normal Discount', self.handsetDiscount, 0))
-		print('%-28s%-38s%-20s' % ('Special Discount', self.specialDiscount, 0))
+		print('%-25s%-35s%-29s%-23s%-31s%-15s%-20s%-20s%s' % ('Service Plan', self.totalPackagePrice, self.revenueCompPack,0 ,0 ,0, self.packagePrice, self.revenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
+		print('%-23s%-36s%-23s%-23s%-31s%-26s%-20s%-20s%s' % ('Handset', self.handsetPrice, self.revenueCompHand, self.handsetPrice, self.revenueCompHand, self.diffImmidateCashAndRev,0 ,0 ,0))
+		print('%-24s%-42s%-16s%-30s%-25s%-24s%-22s%-18s%-22s' % ('Normal Discount', self.handsetDiscount, 0, self.handsetDiscount, 0, (self.handsetDiscount)*-1, 0, 0, 0))
+		if self.specialDiscount != 0:
+			print('%-26s%-39s%-18s%-29s%-30s%-20s%-20s%-19s%-10s' % ('Special Discount', self.specialDiscount, 0, self.specialDiscount,0 ,0 ,0, 0, 0))
 		print('-'*211)
 		print('%-24s%-36s%-22s%-23s%-30s%-24s%-18s%-25s%s' % ('Total', round(self.sumTransAllPrice,2), self.sumRevenueComp, self.sumImmidateHandAndDisc, self.revenueCompHand, self.sumImmidateContAsset, self.packagePrice, self.revenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
 		print('-'*211)
