@@ -2,6 +2,10 @@
 
 #make every number to decimal 2 points
 
+
+# scenario done 1, 10
+# task 20/04/2018 : upgrade, downgrade
+
 class Output(object):
 
 	def __init__(self):
@@ -9,20 +13,35 @@ class Output(object):
 		self.base_formula = BaseFormula()
 		self.startContract = '15/09/2017'
 		self.endContract = '14/09/2018'
-		self.handsetPrice = 24766.36
-		self.handsetDiscount = -1769.16
-		self.specialDiscount = -500.00 # Case 10
+		self.handsetPrice = 32400.36
+		self.handsetDiscount = 4000.20
 		self.packagePrice = 500.00
+
+		# Case 10 will active if specialDiscount value is more than 0
+		self.specialDiscount = 300.00 
 		
+		# Case 7, 8 will active if upgradePackagePrice is more than 0
+		self.changePackagePrice = 1 # if value less than default Case downgrade
+		self.changeDate = '22/10/2017'
+
+
 		#bill cycle infrom
-		self.bill_from, self.bill_to, self.bc_type = self.bill_cycle.main(self.startContract)
+		self.bill_from, self.bill_to, self.bc_type = self.bill_cycle.billCycleInform(self.startContract)
 		# duration : calculate from range betwenn
 		self.day1, self.month1, self.year1 = self.base_formula.cuttingString(self.startContract) # extract contract start
 		self.day2, self.month2, self.year2 = self.base_formula.cuttingString(self.endContract)
 		self.duration = self.base_formula.collectTotalMonth(self.month1, self.year1, self.month2, self.year2)
+		
+		# for inherret class
+		Output.duration_contract = self.duration
+		Output.start_contact = self.startContract
+		Output.end_contract = self.endContract
+		Output.package_price = self.packagePrice
+		Output.change_package_price = self.changePackagePrice
+		Output.change_package_date = self.changeDate
 
 		# Range bill cycle
-		self.startBill, self.endBill, self.codeCycle = self.bill_cycle.main(self.startContract)
+		self.startBill, self.endBill, self.codeCycle = self.bill_cycle.billCycleInform(self.startContract)
 		
 		# A formula, Group by functions name.
 
@@ -49,10 +68,12 @@ class Output(object):
 
 	def scenarioInput(self):
 		print('**** SCENARIO INPUTS ****')
+		print('-'*30)
 		print('Duration Contract: %s' % self.duration)
 		print('Contract Start: %s' % self.startContract)
 		print('Contract End: %s' % self.endContract)
 		print('Bill Cycle: %s to %s' % (self.startBill, self.endBill))
+		print('-'*30)
 
 	def contractTransactionPrice(self):
 		print('*** CONTRACT TRANSACTION PRICE and STANDALONE SELLING PRICE ***')
@@ -62,7 +83,7 @@ class Output(object):
 		print('%-36s%-17s%s' % ('Service Plan', self.totalPackagePrice, self.totalPackagePrice))
 		print('%-34s%-17s%s' % ('Handset', self.handsetPrice, self.handsetPrice))
 		print('%-34s%-24s%s' % ('Normal Discount', self.handsetDiscount, 0))
-		if self.specialDiscount != 0:
+		if self.specialDiscount != 0: # for case 10
 			print('%-38s%-20s%s' % ('Special Discount', self.specialDiscount, 0))
 		print('-'*63)
 		print('%-35s%-16s%s' % ('Total', round(self.sumTransAllPrice,2), round(self.sumTransPrice, 2)))
@@ -76,7 +97,7 @@ class Output(object):
 		print('%-38s%-35s%-33s%-s%-30s%s' % ('Service Plan', self.totalPackagePrice, self.totalPackagePrice, self.percentPackage,'%', self.revenueCompPack))
 		print('%-36s%-35s%-35s%s%-29s%s' % ('Handset', self.handsetPrice, self.handsetPrice, self.percentHandset, '%', self.revenueCompHand))
 		print('%-36s%-40s%-31s%-37s%s' % ('Normal Discount', self.handsetDiscount, 0.00, 0.00, 0.00))
-		if self.specialDiscount != 0:
+		if self.specialDiscount != 0: # for case 10
 			print('%-40s%-36s%-31s%-37s%s' % ('Special Discount', self.specialDiscount, 0.00, 0.00, 0.00))
 		print('-'*150)
 		print('%-37s%-34s%-35s%-s%-30s%s' % ('Total', round(self.sumTransAllPrice,2), round(self.sumTransPrice,2), self.sumPercentComp, '%', self.sumRevenueComp))
@@ -91,7 +112,7 @@ class Output(object):
 		print('%-25s%-35s%-29s%-23s%-31s%-15s%-20s%-20s%s' % ('Service Plan', self.totalPackagePrice, self.revenueCompPack,0 ,0 ,0, self.packagePrice, self.revenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
 		print('%-23s%-36s%-23s%-23s%-31s%-26s%-20s%-20s%s' % ('Handset', self.handsetPrice, self.revenueCompHand, self.handsetPrice, self.revenueCompHand, self.diffImmidateCashAndRev,0 ,0 ,0))
 		print('%-24s%-42s%-16s%-30s%-25s%-24s%-22s%-18s%-22s' % ('Normal Discount', self.handsetDiscount, 0, self.handsetDiscount, 0, (self.handsetDiscount)*-1, 0, 0, 0))
-		if self.specialDiscount != 0:
+		if self.specialDiscount != 0:  # for case 10
 			print('%-26s%-39s%-18s%-29s%-30s%-20s%-20s%-19s%-10s' % ('Special Discount', self.specialDiscount, 0, self.specialDiscount,0 ,0 ,0, 0, 0))
 		print('-'*211)
 		print('%-24s%-36s%-22s%-23s%-30s%-24s%-18s%-25s%s' % ('Total', round(self.sumTransAllPrice,2), self.sumRevenueComp, self.sumImmidateHandAndDisc, self.revenueCompHand, self.sumImmidateContAsset, self.packagePrice, self.revenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
@@ -107,6 +128,10 @@ class Output(object):
 		#print('Monthly Revenue: %s | [%s]' % (self.revenueCompPackPerMonth, self.revenueCompPackPerMonth))
 		#print('Monthly Contract Asset: %s | [%s]' % (self.diffRevenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
 
+
+	def recalculateService(self): # for case upgrade and donwgrade
+		pass
+	
 	def genEventBill(self):
 		date_list_actual = []
 		trans_list_accured = [] # for use in reverse accured
@@ -114,7 +139,7 @@ class Output(object):
 
 		package_value = self.packagePrice
 		actual_value = 0 # real usage value
-		accured_value = 0 # estimate usage value
+		accured_value = 0 # estimate usage valuegi
 		reverse_accured_value = 0 # reverse accured value in last month
 
 		rev_actual_value = 0
@@ -183,7 +208,7 @@ class Output(object):
 			if len(trans_list_accured) == 2:
 				trans_list_accured.pop(0)
 
-			#main loop
+			#billCycleInform loop
 			period+=1
 			trans_month+=1
 
@@ -198,8 +223,11 @@ class Output(object):
 		a.allocating()
 		print('')
 		a.calculateContractAsset()
-	#	print('')
-	#	a.genEventBill()
+		print('')
+		a.recalculateService()
+		print('')
+		a.genEventBill()
+		print('')
 
 
 class BaseFormula(object):
@@ -267,13 +295,11 @@ class BaseFormula(object):
 			if year1 == year2 and month1 == month2:
 				return len(result_list)
 
-		#return result_list
-
-
-class BillCycle(object):
+class BillCycle(Output):
 
 	def __init__(self):
 		self.base_formula = BaseFormula()
+		
 
 	def calculateAccured(self, bill_day, day, month, year, package_price):
 
@@ -294,9 +320,7 @@ class BillCycle(object):
 		actual_full_month = float((round(range_date,2))/daysInLastMonth)*package_price # calculate payment full month
 		return actual_not_full_month, actual_full_month
 
-
-
-	def main(self, date):
+	def billCycleInform(self, date):
 		day, month, year = self.base_formula.cuttingString(date)
 		startBill, endBill = 0, 0
 		bc_name = ''
@@ -330,14 +354,71 @@ class BillCycle(object):
 				endBill = startBill-1
 		return startBill, endBill, bc_name
 
+	def calculatePeriod(self):
+		#duration, start_contract, package_price, change_package_date, chnage_packate_price
+		base_formula = BaseFormula()
+		period = 0
+		# When we want to inherite data from main class, we need to active main class first
+		
+		duration = Output.duration_contract
+		start_contract = Output.start_contact
+		#end_contract = Output.end_contract
+		package_price = Output.package_price
+		change_package_date = Output.change_package_date
+		change_package_price = Output.change_package_price
+
+		day1, month1, year1 = self.base_formula.cuttingString(start_contract)
+		#day2, month2, year2 = self.base_formula.cuttingString(end_contract)
+		day3, month3, year3 = self.base_formula.cuttingString(change_package_date)
+
+		while duration+1 != period:
+			if month1 == 13:
+				month1=1
+				year1+=1
+
+			if month1 == month3 and year1 == year3:
+				if package_price < change_package_price:
+					return period
+				elif package_price > change_package_price:
+					return period
+				else:
+					return None
+			period+=1
+			month1+=1
+			
+			
+
+#class CalculationDuration(Output):
+
+#	def __init__(self):
+#		print(Output.durationContract)
+	
+#	def calculatePeriod(self, startContract, endContract, changeServiceDate):
+#		pass
+		
+		
+		#period = 1
+		#day1, month1, year1 = self.base_formula.cuttingString(startContract)
+		#day2, month2, year2 = self.base_formula.cuttingString(endContract)
+		#day3, month3, year3 = self.base_formula.cuttingString(changeServiceDate) # upgrade date
+
+		#duration = self.base_formula.collectTotalMonth(month1, year1, month2, year2)
+		#while duration != period-1:
+		#	if month1 == 13:
+		#		month1 = 1
+		#		year1+=1
+		#	print(day1, month1, year1)
+		#	month1+=1
+		#	period+=1
+		
+
 a = Output()
 a.showReport()
+b = BillCycle()
+b.calculatePeriod()
 
-#b = BaseFormula()
-#b.distanceDate(4, 9, 2017, 4, 3, 2018)
 
-#self.startContract = '04/09/2017'
-#self.endContract = '04/03/2018'
+#b.calculatePeriod('15/09/2017', '14/09/2018', '20/01/2018')
 
 # ========== not used ==========
 
@@ -353,7 +434,7 @@ a.showReport()
 
 		startDay, startMonth, startYear = self.base_formula.cuttingString(self.startContract) # start contract date
 		endDay, endMonth, endYear = self.base_formula.cuttingString(self.endContract) # end contract date
-		startBill, endBill, bc_name = self.bill_cycle.main(self.startContract) # bill cycle infrom
+		startBill, endBill, bc_name = self.bill_cycle.billCycleInform(self.startContract) # bill cycle infrom
 		
 		print('%-10s%-12s%-20s%-16s%-11s%-15s' % ('PERIOD', 'EVENT DATE', 'BUSINESS EVENT' ,'CASH FLOW', 'REVENUE', 'DELTA')) # %-10i : '10' is indent space, 'i' is data type
 		
