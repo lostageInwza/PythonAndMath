@@ -4,7 +4,8 @@
 
 
 # scenario done 1, 10
-# task 20/04/2018 : upgrade, downgrade
+# task : scenario 9 
+
 
 class Output(object):
 
