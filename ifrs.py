@@ -3,8 +3,8 @@
 #make every number to decimal 2 points
 
 
-# scenario done 1, 10
-# task : scenario 9 
+# scenario done 1, 9, 10
+# task : case 2 terminate
 
 
 class Output(object):
@@ -15,31 +15,36 @@ class Output(object):
 		self.startContract = '15/09/2017'
 		self.endContract = '14/09/2018'
 		self.handsetPrice = 32400.36
-		self.handsetDiscount = 4000.20
+		self.handsetDiscount = -6000.00
 		self.packagePrice = 500.00
-
-		# Case 10 will active if specialDiscount value is more than 0
-		self.specialDiscount = 300.00 
 		
-		# Case 7, 8 will active if upgradePackagePrice is more than 0
-		self.changePackagePrice = 1 # if value less than default Case downgrade
-		self.changeDate = '22/10/2017'
 
+		# Case 7, 8 will active if upgradePackagePrice is more than 0
+		#self.changePackagePrice = 1 # if value less than default Case downgrade
+		#self.changeDate = '22/10/2017'
+
+		# Case 2 will active of 
+
+		# Case 9 will active if free goods price more than 0
+		self.freeGoodsPrice = 4320.00
+		
+		# Case 10 will active if specialDiscount value is more than 0
+		self.specialDiscount = 0 
 
 		#bill cycle infrom
 		self.bill_from, self.bill_to, self.bc_type = self.bill_cycle.billCycleInform(self.startContract)
-		# duration : calculate from range betwenn
+		# duration : calculate from range between
 		self.day1, self.month1, self.year1 = self.base_formula.cuttingString(self.startContract) # extract contract start
 		self.day2, self.month2, self.year2 = self.base_formula.cuttingString(self.endContract)
 		self.duration = self.base_formula.collectTotalMonth(self.month1, self.year1, self.month2, self.year2)
 		
 		# for inherret class
-		Output.duration_contract = self.duration
-		Output.start_contact = self.startContract
-		Output.end_contract = self.endContract
-		Output.package_price = self.packagePrice
-		Output.change_package_price = self.changePackagePrice
-		Output.change_package_date = self.changeDate
+		#Output.duration_contract = self.duration
+		#Output.start_contact = self.startContract
+		#Output.end_contract = self.endContract
+		#Output.package_price = self.packagePrice
+		#Output.change_package_price = self.changePackagePrice
+		#Output.change_package_date = self.changeDate
 
 		# Range bill cycle
 		self.startBill, self.endBill, self.codeCycle = self.bill_cycle.billCycleInform(self.startContract)
@@ -47,25 +52,31 @@ class Output(object):
 		# A formula, Group by functions name.
 
 		# Contract Trans Price
-		self.discountAndHandset = round(self.handsetPrice+self.handsetDiscount,2)
-		self.totalPackagePrice = round(self.packagePrice*self.duration,2)
-		self.sumTransAllPrice = self.handsetPrice+self.handsetDiscount+self.totalPackagePrice+self.specialDiscount # total trans price
-		self.sumTransPrice = self.handsetPrice+self.totalPackagePrice # total ssp
+		self.discountAndHandset = round(self.handsetPrice+self.handsetDiscount,2) # Handset Discount
+		self.totalPackagePrice = round(self.packagePrice*self.duration,2) # Package Price times with duration contract
+		self.sumTransAllPrice = self.handsetPrice+self.handsetDiscount+self.totalPackagePrice+self.specialDiscount # Transaction Price
+		self.sumTransPrice = self.handsetPrice+self.totalPackagePrice+self.freeGoodsPrice # Total Contract SPP
 
 		# Allocating Price
-		self.percentHandset = round((self.handsetPrice / self.sumTransPrice)*100,2)
-		self.percentPackage = round((self.totalPackagePrice / self.sumTransPrice)*100,2)
-		self.sumPercentComp = round(self.percentHandset+self.percentPackage,2)
-		self.revenueCompHand = round((self.percentHandset * self.sumTransAllPrice)/100,2)
-		self.revenueCompPack = round((self.percentPackage * self.sumTransAllPrice)/100,2)
-		self.sumRevenueComp = round(self.revenueCompHand+self.revenueCompPack,2)
+		self.percentHandset = (self.handsetPrice / self.sumTransPrice)*100 # Percentage per Component (Handset)
+		self.percentPackage = (self.totalPackagePrice / self.sumTransPrice)*100 # Percentage per Component (Package)
+		self.percentFreeGoods = (self.freeGoodsPrice / self.sumTransPrice)*100 # Percentage per Component (Free Goods) # case 9
+
+		self.sumPercentComp = round(self.percentHandset + self.percentPackage + self.percentFreeGoods,1) # Sum total percentage (must be 100%)
+		
+		self.revenueCompHand = (self.percentHandset * self.sumTransAllPrice)/100 # Revenue to component (Handset)
+		self.revenueCompPack = (self.percentPackage * self.sumTransAllPrice)/100 # Revenue to component (Package)
+		self.revenueFreeGoods = (self.percentFreeGoods * self.sumTransAllPrice)/100 # Revenue to component (Free Goods)
+
+		self.sumRevenueComp = round(self.revenueCompHand + self.revenueCompPack + self.revenueFreeGoods,2) # Total Revenue
 
 		# Contract Asset
-		self.sumImmidateHandAndDisc = round(self.handsetPrice + self.handsetDiscount, 2) # sum of handset and discount handset
-		self.diffImmidateCashAndRev = round(self.revenueCompHand-self.handsetPrice, 2)
-		self.sumImmidateContAsset = round(self.diffImmidateCashAndRev + (self.handsetDiscount*-1) + (self.specialDiscount*-1), 2)
-		self.revenueCompPackPerMonth = round(self.revenueCompPack / self.duration, 2)
-		self.diffRevenueCompPackPerMonth = round(self.revenueCompPackPerMonth - self.packagePrice, 2)
+		self.sumImmidateHandAndDisc = self.handsetPrice + self.handsetDiscount # Sum Immediate Cashflow (Handset and Discount)
+		self.sumImmidateRev = self.revenueCompHand+self.revenueFreeGoods
+		self.diffImmidateCashAndRev = round(self.revenueCompHand-self.handsetPrice, 2) # Immediate Contract Asset (Handset)
+		self.sumImmidateContAsset = self.diffImmidateCashAndRev + (self.handsetDiscount*-1) + (self.specialDiscount*-1) + self.revenueFreeGoods # Sum immediate contract asset
+		self.revenueCompPackPerMonth = self.revenueCompPack / self.duration
+		self.diffRevenueCompPackPerMonth = self.revenueCompPackPerMonth - self.packagePrice
 
 	def scenarioInput(self):
 		print('**** SCENARIO INPUTS ****')
@@ -85,55 +96,51 @@ class Output(object):
 		print('%-34s%-17s%s' % ('Handset', self.handsetPrice, self.handsetPrice))
 		print('%-34s%-24s%s' % ('Normal Discount', self.handsetDiscount, 0))
 		if self.specialDiscount != 0: # for case 10
-			print('%-38s%-20s%s' % ('Special Discount', self.specialDiscount, 0))
+			print('%-35s%-23s%s' % ('Special Discount', self.specialDiscount, 0))
+		if self.freeGoodsPrice != 0: # for case 9
+			print('%-38s%-16s%-20s' % ('Free Goods Price', 0, self.freeGoodsPrice))
 		print('-'*63)
 		print('%-35s%-16s%s' % ('Total', round(self.sumTransAllPrice,2), round(self.sumTransPrice, 2)))
 		print('-'*63)
 
 	def allocating(self):
-		print('**** ALLOCATING REVENUE TO COMPONENTS ****')
+		print('**** ALLOCATING REVENUE TO COMPONENTS ****')	
 		print('-'*150)
 		print('%-21s%-30s%-35s%-30s%-20s' % ('Component', 'Total Transcation Price', 'Total Standard Selling Price', 'Percentage-per Components', 'Revenue Allocated to Component'))
 		print('-'*150)
-		print('%-38s%-35s%-33s%-s%-30s%s' % ('Service Plan', self.totalPackagePrice, self.totalPackagePrice, self.percentPackage,'%', self.revenueCompPack))
-		print('%-36s%-35s%-35s%s%-29s%s' % ('Handset', self.handsetPrice, self.handsetPrice, self.percentHandset, '%', self.revenueCompHand))
-		print('%-36s%-40s%-31s%-37s%s' % ('Normal Discount', self.handsetDiscount, 0.00, 0.00, 0.00))
+		print('%-38s%-35s%-33s%-s%-28s%s' % ('Service Plan', self.totalPackagePrice, self.totalPackagePrice, round(self.percentPackage,2),'%', round(self.revenueCompPack,2)))
+		print('%-36s%-35s%-35s%s%-28s%s' % ('Handset', self.handsetPrice, self.handsetPrice, round(self.percentHandset,2), '%',round(self.revenueCompHand,2)))
+		print('%-36s%-40s%-29s%-37s%s' % ('Normal Discount', self.handsetDiscount, 0.00, 0.00, 0.00))
 		if self.specialDiscount != 0: # for case 10
-			print('%-40s%-36s%-31s%-37s%s' % ('Special Discount', self.specialDiscount, 0.00, 0.00, 0.00))
+			print('%-38s%-36s%-33s%-37s%s' % ('Special Discount', self.specialDiscount, 0.00, 0.00, 0.00))
+		if self.freeGoodsPrice != 0: # for case 9
+			print(('%-38s%-38s%-28s%s%-29s%-33s') % ('Free goods things',0 ,0 ,round(self.percentFreeGoods,2), '%', round(self.revenueFreeGoods,2)))
 		print('-'*150)
-		print('%-37s%-34s%-35s%-s%-30s%s' % ('Total', round(self.sumTransAllPrice,2), round(self.sumTransPrice,2), self.sumPercentComp, '%', self.sumRevenueComp))
+		print('%-37s%-34s%-33s%-s%-30s%s' % ('Total', round(self.sumTransAllPrice,2), round(self.sumTransPrice,2), self.sumPercentComp, '%', self.sumRevenueComp))
 		print('-'*150)
 
 
 	def calculateContractAsset(self):
 		print('**** CALCULATING THE CONTRACT ASSET - Immediate and Ongoing Events ****')
 		print('-'*211)
-		print('%-17s%-21s%-35s%-23s%-23s%-30s%-20s%-20s%s' %('Component','Total Cashflow', 'Revenue Allocated to Component', 'Immidate Cashflow', 'Immediate Revenue', 'Immediate Contract Assets', 'Monthly Cashflow', 'Monthly Revenue', 'Monthly Contract Asset'))
+		print('%-20s%-25s%-35s%-23s%-23s%-30s%-20s%-20s%s' %('Component','Total Cashflow', 'Revenue Allocated to Component', 'Immidate Cashflow', 'Immediate Revenue', 'Immediate Contract Assets', 'Monthly Cashflow', 'Monthly Revenue', 'Monthly Contract Asset'))
 		print('-'*211)
-		print('%-25s%-35s%-29s%-23s%-31s%-15s%-20s%-20s%s' % ('Service Plan', self.totalPackagePrice, self.revenueCompPack,0 ,0 ,0, self.packagePrice, self.revenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
-		print('%-23s%-36s%-23s%-23s%-31s%-26s%-20s%-20s%s' % ('Handset', self.handsetPrice, self.revenueCompHand, self.handsetPrice, self.revenueCompHand, self.diffImmidateCashAndRev,0 ,0 ,0))
-		print('%-24s%-42s%-16s%-30s%-25s%-24s%-22s%-18s%-22s' % ('Normal Discount', self.handsetDiscount, 0, self.handsetDiscount, 0, (self.handsetDiscount)*-1, 0, 0, 0))
+		print('%-28s%-35s%-25s%-21s%-30s%-22s%-22s%-19s%-10s' % ('Service Plan', self.totalPackagePrice, round(self.revenueCompPack,2),0 ,0 ,0, self.packagePrice, round(self.revenueCompPackPerMonth,2), round(self.diffRevenueCompPackPerMonth,2)))
+		print('%-28s%-35s%-25s%-21s%-30s%-22s%-22s%-19s%-10s' % ('Handset', self.handsetPrice, round(self.revenueCompHand,2), round(self.handsetPrice,2), round(self.revenueCompHand,2), self.diffImmidateCashAndRev,0 ,0 ,0))
+		print('%-28s%-35s%-25s%-21s%-30s%-22s%-22s%-19s%-10s' % ('Normal Discount', self.handsetDiscount, 0, self.handsetDiscount, 0, (self.handsetDiscount)*-1, 0, 0, 0))
 		if self.specialDiscount != 0:  # for case 10
-			print('%-26s%-39s%-18s%-29s%-30s%-20s%-20s%-19s%-10s' % ('Special Discount', self.specialDiscount, 0, self.specialDiscount,0 ,0 ,0, 0, 0))
+			print('%-28s%-39s%-18s%-29s%-30s%-20s%-20s%-19s%-10s' % ('Special Discount', self.specialDiscount, 0, self.specialDiscount,0 ,0 ,0, 0, 0))
+		if self.freeGoodsPrice != 0:
+			print('%-28s%-35s%-25s%-21s%-30s%-22s%-22s%-19s%-10s' % ('Free goods thing', 0, round(self.revenueFreeGoods,2), 0, round(self.revenueFreeGoods,2) ,round(self.revenueFreeGoods, 2) ,0, 0, 0))
 		print('-'*211)
-		print('%-24s%-36s%-22s%-23s%-30s%-24s%-18s%-25s%s' % ('Total', round(self.sumTransAllPrice,2), self.sumRevenueComp, self.sumImmidateHandAndDisc, self.revenueCompHand, self.sumImmidateContAsset, self.packagePrice, self.revenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
+		print('%-24s%-38s%-24s%-23s%-30s%-24s%-20s%-20s%s' % ('Total', round(self.sumTransAllPrice,2), round(self.sumRevenueComp,2), round(self.sumImmidateHandAndDisc,2), round(self.sumImmidateRev,2), round(self.sumImmidateContAsset,2), round(self.packagePrice,2), round(self.revenueCompPackPerMonth,2), round(self.diffRevenueCompPackPerMonth,2)))
 		print('-'*211)
-		
-		
-		#print('Total Cashflow: %s | %s | %s | [%s]' % (self.handsetPrice, self.handsetDiscount*-1, self.totalPackagePrice, round(self.sumTransAllPrice, 2)))
-		#print('Revenue Allocated to Component: %s | %s | [%s]' % (self.revenueCompHand, self.revenueCompPack, self.sumRevenueComp))
-		#print('Immidate Cashflow: %s | %s | [%s]' % (self.handsetPrice, self.handsetDiscount*-1, self.sumImmidateHandAndDisc))
-		#print('Immediate Revenue: %s | [%s]' % (self.revenueCompHand,  self.revenueCompHand))
-		#print('Immediate Contract Asset: %s | %s | [%s]' % (self.diffImmidateCashAndRev, self.handsetDiscount, self.sumImmidateContAsset))
-		#print('Monthly Cashflow: %s | [%s]' % (self.packagePrice, self.packagePrice))
-		#print('Monthly Revenue: %s | [%s]' % (self.revenueCompPackPerMonth, self.revenueCompPackPerMonth))
-		#print('Monthly Contract Asset: %s | [%s]' % (self.diffRevenueCompPackPerMonth, self.diffRevenueCompPackPerMonth))
-
-
-	def recalculateService(self): # for case upgrade and donwgrade
-		pass
 	
 	def genEventBill(self):
+		collect_actual = []
+		collect_accured = []
+		collect_revAccured = []
+
 		date_list_actual = []
 		trans_list_accured = [] # for use in reverse accured
 		period = 1
@@ -212,6 +219,13 @@ class Output(object):
 			#billCycleInform loop
 			period+=1
 			trans_month+=1
+			collect_actual.append(actual_value)
+			collect_accured.append(accured_value)
+			collect_revAccured.append(reverse_accured_value)
+		print('')
+		print('Actual Transaction:',collect_actual)
+		print('Accured Transaction:',collect_accured)
+		print('Reverse Accured Trasnaction:',collect_revAccured)
 
 
 	def showReport(self):
@@ -224,8 +238,6 @@ class Output(object):
 		a.allocating()
 		print('')
 		a.calculateContractAsset()
-		print('')
-		a.recalculateService()
 		print('')
 		a.genEventBill()
 		print('')
@@ -361,10 +373,10 @@ class BillCycle(Output):
 		period = 0
 		# When we want to inherite data from main class, we need to active main class first
 		
-		duration = Output.duration_contract
-		start_contract = Output.start_contact
+		#duration = Output.duration_contract
+		#start_contract = Output.start_contact
 		#end_contract = Output.end_contract
-		package_price = Output.package_price
+		#package_price = Output.package_price
 		change_package_date = Output.change_package_date
 		change_package_price = Output.change_package_price
 
@@ -415,8 +427,8 @@ class BillCycle(Output):
 
 a = Output()
 a.showReport()
-b = BillCycle()
-b.calculatePeriod()
+#b = BillCycle()
+#b.calculatePeriod()
 
 
 #b.calculatePeriod('15/09/2017', '14/09/2018', '20/01/2018')
