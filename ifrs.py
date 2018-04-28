@@ -1,9 +1,5 @@
-#support Case1, Case10
-
-#make every number to decimal 2 points
-
-
 # scenario done 1, 9, 10
+# BC 18 not support now [contract_start: 1 - 5]
 # task : case 2 terminate
 
 
@@ -17,13 +13,13 @@ class Output(object):
 		self.handsetPrice = 32400.36
 		self.handsetDiscount = -6000.00
 		self.packagePrice = 500.00
-		
 
 		# Case 7, 8 will active if upgradePackagePrice is more than 0
 		#self.changePackagePrice = 1 # if value less than default Case downgrade
 		#self.changeDate = '22/10/2017'
 
-		# Case 2 will active of 
+		# Case 2 will active if terminate_date is not null
+		self.terminateDate = '20/09/2018'
 
 		# Case 9 will active if free goods price more than 0
 		self.freeGoodsPrice = 4320.00
@@ -433,98 +429,3 @@ a.showReport()
 
 #b.calculatePeriod('15/09/2017', '14/09/2018', '20/01/2018')
 
-# ========== not used ==========
-
-"""period = 1
-		revenue = '-'
-		diff = 1
-		count = 1
-		listDate = []
-		accured_list = []
-		actual_tmp = ''
-		accured_tmp = ''
-		
-
-		startDay, startMonth, startYear = self.base_formula.cuttingString(self.startContract) # start contract date
-		endDay, endMonth, endYear = self.base_formula.cuttingString(self.endContract) # end contract date
-		startBill, endBill, bc_name = self.bill_cycle.billCycleInform(self.startContract) # bill cycle infrom
-		
-		print('%-10s%-12s%-20s%-16s%-11s%-15s' % ('PERIOD', 'EVENT DATE', 'BUSINESS EVENT' ,'CASH FLOW', 'REVENUE', 'DELTA')) # %-10i : '10' is indent space, 'i' is data type
-		
-		while period != self.duration+1:
-
-			if startMonth == 13:
-				startMonth = 1
-				startYear+=1
-
-
-			#create accured value
-			accured_value = self.bill_cycle.calculateAccured(endBill, startDay, startMonth, startYear, self.packagePrice)
-
-			#reverse actual
-			accured_list.append(accured_value)
-
-			#create actual value
-			nowFullDate = self.base_formula.combineToFullDate(startDay, startMonth, startYear)
-			listDate.append(nowFullDate)
-
-			
-			if count > 1:
-				accured_tmp = accured_list[0], accured_list[1]
-				actual_tmp = listDate[0], listDate[1]
-				listDate.pop(0)
-				accured_list.pop(0)
-			
-			if accured_tmp:
-				convert_accured_tmp = list(accured_tmp)
-				accured_tmp_value = convert_accured_tmp[0]*-1
-
-			if actual_tmp:
-				convert_actual_tmp = list(actual_tmp)
-				actual_value_not_full, actual_value_full = self.bill_cycle.calculateActual(endBill, convert_actual_tmp[0], convert_actual_tmp[1], self.packagePrice)
-
-			if period >= self.duration:
-				accured_value = 0
-
-			if count == 1:
-				actual_value = 0
-				accured_tmp_value = 0
-
-			if count != 1:
-			  if period == 1:
-			    actual_value = round(actual_value_not_full, 2) # if period is 1 thats mean it's not in bill cycle loop, effect of that is : total day will not match
-			  else:
-				  actual_value = round(actual_value_full, 2)
-
-			if self.base_formula.combineToFullDate(startDay, startMonth, startYear)== self.endContract:
-				accured_tmp_value = 0
-
-			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRANS', actual_value, revenue, diff)) # actual : 
-			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACC', accured_value, revenue, diff)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
-			print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, startDay, startMonth, startYear, 'DPR_TRACCREV', accured_tmp_value, revenue, diff)) # reverse-acclue : acclue in lastmonth with negative value 
-			print('------------------------------------------------------------------------------')
-
-			if period == self.duration and startDay < endDay: # if period equal duration and startContact is less than endDay
-				startMonth-=1
-				startDay=endDay
-				period-=1
-
-			if period == 1 and startDay != endBill: # if first period by startContract not equal endBill(pay date)
-				startDay = endBill
-				period = 0
-
-			period+=1
-			startMonth+=1
-			count+=1
-	
-		#print("Total : %i" % int(money-1))"""
-
-
-		#print('Transaction Price: %s | %s | %s | [%s]' % (self.handsetPrice, self.handsetDiscount*-1, self.totalPackagePrice, round(self.sumTransAllPrice, 2)))
-		#print('Total Contract SPP: %s | %s | [%s]' % (self.handsetPrice, self.totalPackagePrice, round(self.sumTransPrice, 2)))
-		
-
-		#print('Total Transaction Price: %s | %s | %s | [%s]' % (self.handsetPrice, self.handsetDiscount*-1, self.totalPackagePrice, round(self.sumTransAllPrice, 2)))
-		#print('Total Standalone Selling Price: [SPP]: %s | %s | [%s]' % (self.handsetPrice, self.totalPackagePrice, round(self.sumTransPrice, 2)))
-		#print('Percentage-per Components: %s%% | %s%% | [%s%%]' % (self.percentHandset, self.percentPackage, self.sumPercentComp))
-		#print('Revenue Allocated to Component: %s | %s | [%s]' % (self.revenueCompHand, self.revenueCompPack, self.sumRevenueComp)) # round((a * b) / 100,2)
