@@ -4,16 +4,23 @@
 
 
 class Output(object):
+	
 
 	def __init__(self):
 		self.bill_cycle = BillCycle() # inhert class
 		self.base_formula = BaseFormula()
-		self.startContract = '15/09/2017'
-		self.endContract = '14/09/2018'
-		self.handsetPrice = 32400.36
-		self.handsetDiscount = -6000.00
-		self.packagePrice = 500.00
+		self.startContract = str(input('Start Contract: ')) #'15/09/2017'
+		self.endContract = str(input('End Contract: ')) #'14/09/2018'
+		
 
+		handsetInput = str(input('Handset price: '))
+		handsetDiscountInput = str(input('Handset discount: '))
+		packagePriceInput = str(input('Package price: '))
+		
+		self.handsetPrice = self.base_formula.addDecimal(handsetInput)
+		self.handsetDiscount = self.base_formula.addDecimal(handsetDiscountInput)
+		self.packagePrice = self.base_formula.addDecimal(packagePriceInput)
+		
 		# Case 7, 8 will active if upgradePackagePrice is more than 0
 		#self.changePackagePrice = 1 # if value less than default Case downgrade
 		#self.changeDate = '22/10/2017'
@@ -25,7 +32,7 @@ class Output(object):
 		self.freeGoodsPrice = 4320.00
 		
 		# Case 10 will active if specialDiscount value is more than 0
-		self.specialDiscount = 0 
+		self.specialDiscount = 3200.00
 
 		#bill cycle infrom
 		self.bill_from, self.bill_to, self.bc_type = self.bill_cycle.billCycleInform(self.startContract)
@@ -41,7 +48,6 @@ class Output(object):
 		#Output.package_price = self.packagePrice
 		#Output.change_package_price = self.changePackagePrice
 		#Output.change_package_date = self.changeDate
-
 		# Range bill cycle
 		self.startBill, self.endBill, self.codeCycle = self.bill_cycle.billCycleInform(self.startContract)
 		
@@ -224,19 +230,20 @@ class Output(object):
 		print('Reverse Accured Trasnaction:',collect_revAccured)
 
 
-	def showReport(self):
-		a = Output()
-		print('')
-		a.scenarioInput()
-		print('')
-		a.contractTransactionPrice()
-		print('')
-		a.allocating()
-		print('')
-		a.calculateContractAsset()
-		print('')
-		a.genEventBill()
-		print('')
+	#def showReport(self):
+	#	pass
+		#print('')
+		#Output.scenarioInput(self)
+		#b = Output()
+		#print('')
+		#Output.contractTransactionPrice(self)
+		#print('')
+		#b.allocating()
+		#print('')
+		#b.calculateContractAsset()
+		#print('')
+		#b.genEventBill()
+		#print('')
 
 
 class BaseFormula(object):
@@ -253,7 +260,6 @@ class BaseFormula(object):
   		if len(b) == 1:
   			b = '0'+str(b)
   		return a + '/' + b + '/' + c
-
 
 	def checkYear(self, year):
 		if year%4 != 0:
@@ -303,6 +309,13 @@ class BaseFormula(object):
 				year1+=1
 			if year1 == year2 and month1 == month2:
 				return len(result_list)
+	
+	def addDecimal(self, a):
+		if a.find('.') == -1:
+			con_a = str(a)
+			con_a+='.00'
+			a = float(con_a)
+		return a
 
 class BillCycle(Output):
 
@@ -363,37 +376,49 @@ class BillCycle(Output):
 				endBill = startBill-1
 		return startBill, endBill, bc_name
 
-	def calculatePeriod(self):
+		
+a = Output()
+print('')
+a.scenarioInput()
+print('')
+a.contractTransactionPrice()
+print('')
+a.allocating()
+print('')
+a.calculateContractAsset()
+print('')
+a.genEventBill()
+input('Press any key to exit..')
+#	def calculatePeriod(self):
 		#duration, start_contract, package_price, change_package_date, chnage_packate_price
-		base_formula = BaseFormula()
-		period = 0
+#		base_formula = BaseFormula()
+#		period = 0
 		# When we want to inherite data from main class, we need to active main class first
 		
 		#duration = Output.duration_contract
 		#start_contract = Output.start_contact
 		#end_contract = Output.end_contract
 		#package_price = Output.package_price
-		change_package_date = Output.change_package_date
-		change_package_price = Output.change_package_price
+		#change_package_date = Output.change_package_date
+		#change_package_price = Output.change_package_price
 
-		day1, month1, year1 = self.base_formula.cuttingString(start_contract)
+		#day1, month1, year1 = self.base_formula.cuttingString(start_contract)
 		#day2, month2, year2 = self.base_formula.cuttingString(end_contract)
-		day3, month3, year3 = self.base_formula.cuttingString(change_package_date)
+		#day3, month3, year3 = self.base_formula.cuttingString(change_package_date)
 
-		while duration+1 != period:
-			if month1 == 13:
-				month1=1
-				year1+=1
-
-			if month1 == month3 and year1 == year3:
-				if package_price < change_package_price:
-					return period
-				elif package_price > change_package_price:
-					return period
-				else:
-					return None
-			period+=1
-			month1+=1
+		#while duration+1 != period:
+		#	if month1 == 13:
+		#		month1=1
+		#		year1+=1
+		#	if month1 == month3 and year1 == year3:
+		#		if package_price < change_package_price:
+		#			return period
+		#		elif package_price > change_package_price:
+		#			return period
+		#		else:
+		#			return None
+		#	period+=1
+		#	month1+=1
 			
 			
 
@@ -421,11 +446,5 @@ class BillCycle(Output):
 		#	period+=1
 		
 
-a = Output()
-a.showReport()
-#b = BillCycle()
-#b.calculatePeriod()
 
-
-#b.calculatePeriod('15/09/2017', '14/09/2018', '20/01/2018')
 
