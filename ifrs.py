@@ -1,5 +1,5 @@
 # scenario done 1, 9, 10
-# BC 18 not support now [contract_start: 1 - 5] # wait for confirm business logic
+# BC 18 not support now [contract_start: 1 - 5] # wait for confrim business logic
 
 import datetime
 
@@ -20,9 +20,14 @@ class Output(object):
 		
 			startCon = datetime.date(chk_start_year, chk_start_month, chk_start_day)
 			endCon = datetime.date(chk_end_year, chk_end_month, chk_end_day)
-
+			
 			if startCon >= endCon or chk_start_day in range(1, 5):
-				print("Something wrong, please check you're date input (This time start contract days in BC18 is not support)")
+				print("Something wrong, please check you're date input.")
+			elif chk_start_month == chk_end_month and chk_start_year == chk_end_year:
+				if chk_start_day-chk_end_month < self.base_formula.checkMonth(chk_start_month, chk_start_year):        
+					print("Duration contract must be greater than 1.")
+				else:
+					break
 			else:
 				break
 
@@ -36,7 +41,7 @@ class Output(object):
 		packagePriceInput = str(input('Package price: '))
 
 		freeGoodsPriceInput = str(input('Free goods price: ')) # If this value are more than 0 calculation for Case 9 will active
-		specialDiscountInput = str(input('Special Discount: ')) # If this value are more than 0 calculation for Case 10 will active
+		specialDiscountInput = str(input('Special Discount: ')) # If this[ value are more than 0 calculation for Case 10 will active
 		
 		self.handsetPrice = self.base_formula.addDecimal(handsetInput)
 		self.handsetDiscount = self.base_formula.addDecimal(handsetDiscountInput)
@@ -259,10 +264,11 @@ class Output(object):
 			collect_actual.append(actual_value)
 			collect_accured.append(accured_value)
 			collect_revAccured.append(reverse_accured_value)
+			
 		print('')
-		print('Actual Transaction:',collect_actual)
-		print('Accured Transaction:',collect_accured)
-		print('Reverse Accured Trasnaction:',collect_revAccured)
+	#	print('Actual Transaction:',collect_actual)
+	#	print('Accured Transaction:',collect_accured)
+	#	print('Reverse Accured Trasnaction:',collect_revAccured)
 
 
 	#def showReport(self):
