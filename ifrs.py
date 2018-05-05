@@ -1,38 +1,72 @@
 # scenario done 1, 9, 10
-# BC 18 not support now [contract_start: 1 - 5]
-# task : case 2 terminate
+# BC 18 not support now [contract_start: 1 - 5] # wait for confirm business logic
 
+import datetime
 
 class Output(object):
 	
 
 	def __init__(self):
-		self.bill_cycle = BillCycle() # inhert class
+		self.bill_cycle = BillCycle() # inherit class
 		self.base_formula = BaseFormula()
-		self.startContract = str(input('Start Contract: ')) #'15/09/2017'
-		self.endContract = str(input('End Contract: ')) #'14/09/2018'
+		while True:
+			print('Start Contract ex: 01/01/2018')
+			self.startContract = str(input('> ')) #'15/09/2017'
+			print('End Contract ex: 01/01/2018')
+			self.endContract = str(input('> ')) #'14/09/2018'
 		
+			chk_start_day, chk_start_month, chk_start_year = self.base_formula.cuttingString(self.startContract)
+			chk_end_day, chk_end_month, chk_end_year = self.base_formula.cuttingString(self.endContract)
+		
+			startCon = datetime.date(chk_start_year, chk_start_month, chk_start_day)
+			endCon = datetime.date(chk_end_year, chk_end_month, chk_end_day)
+
+			if startCon >= endCon or chk_start_day in range(1, 5):
+				print("Something wrong, please check you're date input (This time start contract days in BC18 is not support)")
+			else:
+				break
+
+			#if chk_start_day < chk_end_day and chk_start_month < chk_end_month or chk_start_year > chk_end_year:
+			#	print('Something wrong with date contract, please try again :D')
+			#else:
+			#	break
 
 		handsetInput = str(input('Handset price: '))
 		handsetDiscountInput = str(input('Handset discount: '))
 		packagePriceInput = str(input('Package price: '))
+
+		freeGoodsPriceInput = str(input('Free goods price: ')) # If this value are more than 0 calculation for Case 9 will active
+		specialDiscountInput = str(input('Special Discount: ')) # If this value are more than 0 calculation for Case 10 will active
 		
 		self.handsetPrice = self.base_formula.addDecimal(handsetInput)
 		self.handsetDiscount = self.base_formula.addDecimal(handsetDiscountInput)
 		self.packagePrice = self.base_formula.addDecimal(packagePriceInput)
+
 		
+		################################ Case 9 ####################################
+		if freeGoodsPriceInput == '' or freeGoodsPriceInput == '0': 
+			self.freeGoodsPrice = 0
+		else:
+			self.freeGoodsPrice = self.base_formula.addDecimal(freeGoodsPriceInput)
+
+		################################ Case 10 ####################################
+		if specialDiscountInput == '' or specialDiscountInput == '0':
+			self.specialDiscount = 0
+		else:
+			self.specialDiscount = self.base_formula.addDecimal(specialDiscountInput)
+
 		# Case 7, 8 will active if upgradePackagePrice is more than 0
 		#self.changePackagePrice = 1 # if value less than default Case downgrade
 		#self.changeDate = '22/10/2017'
 
 		# Case 2 will active if terminate_date is not null
-		self.terminateDate = '20/09/2018'
+		#self.terminateDate = '20/09/2018'
 
 		# Case 9 will active if free goods price more than 0
-		self.freeGoodsPrice = 4320.00
+		#self.freeGoodsPrice = 4320.00
 		
 		# Case 10 will active if specialDiscount value is more than 0
-		self.specialDiscount = 3200.00
+		#self.specialDiscount = 3200.00
 
 		#bill cycle infrom
 		self.bill_from, self.bill_to, self.bc_type = self.bill_cycle.billCycleInform(self.startContract)
@@ -41,13 +75,14 @@ class Output(object):
 		self.day2, self.month2, self.year2 = self.base_formula.cuttingString(self.endContract)
 		self.duration = self.base_formula.collectTotalMonth(self.month1, self.year1, self.month2, self.year2)
 		
-		# for inherret class
+		# for inherit class
 		#Output.duration_contract = self.duration
 		#Output.start_contact = self.startContract
 		#Output.end_contract = self.endContract
 		#Output.package_price = self.packagePrice
 		#Output.change_package_price = self.changePackagePrice
 		#Output.change_package_date = self.changeDate
+
 		# Range bill cycle
 		self.startBill, self.endBill, self.codeCycle = self.bill_cycle.billCycleInform(self.startContract)
 		
@@ -389,6 +424,8 @@ a.calculateContractAsset()
 print('')
 a.genEventBill()
 input('Press any key to exit..')
+
+
 #	def calculatePeriod(self):
 		#duration, start_contract, package_price, change_package_date, chnage_packate_price
 #		base_formula = BaseFormula()
