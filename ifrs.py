@@ -1,6 +1,13 @@
 # scenario done 1, 9, 10
 # BC 18 not support now [contract_start: 1 - 5] # wait for confrim business logic
 
+# make data
+			#self.endContract = '08/10/2018'
+			#self.startContract = '09/10/2017'
+			#self.handsetPrice = 
+			#self.handsetDiscount =
+			#self.packagePrice
+
 import datetime
 
 class Output(object):
@@ -14,31 +21,30 @@ class Output(object):
 			self.startContract = str(input('> '))
 			print('End Contract ex: 01/01/2018')
 			self.endContract = str(input('> '))
-
-			# make data
-			#self.endContract = '08/10/2018'
-			#self.startContract = '09/10/2017'
-			#self.handsetPrice = 
-			#self.handsetDiscount =
-			#self.packagePrice
-
-			chk_start_day, chk_start_month, chk_start_year = self.base_formula.cuttingString(self.startContract)
-			chk_end_day, chk_end_month, chk_end_year = self.base_formula.cuttingString(self.endContract)
-		
-			startCon = datetime.date(chk_start_year, chk_start_month, chk_start_day)
-			endCon = datetime.date(chk_end_year, chk_end_month, chk_end_day)
-			
-			if startCon >= endCon or chk_start_day in range(1, 5):
-				print("Something wrong, please check you're date input.")
-			elif chk_start_month == chk_end_month and chk_start_year == chk_end_year:
-				if chk_start_day-chk_end_month < self.base_formula.checkMonth(chk_start_month, chk_start_year):        
-					print("Duration contract must be greater than 1.")
+			if self.startContract == '' or self.endContract == '':
+				print("Date contract cannot be null.")
+			else:
+				chk_start_day, chk_start_month, chk_start_year = self.base_formula.cuttingString(self.startContract)
+				chk_end_day, chk_end_month, chk_end_year = self.base_formula.cuttingString(self.endContract)
+				
+				startCon = datetime.date(chk_start_year, chk_start_month, chk_start_day)
+				endCon = datetime.date(chk_end_year, chk_end_month, chk_end_day)
+				if startCon >= endCon or chk_start_day in range(1, 5):
+					print("Something wrong, please check you're date input.")
+				elif chk_start_month == chk_end_month and chk_start_year == chk_end_year:
+					if chk_start_day-chk_end_month < self.base_formula.checkMonth(chk_start_month, chk_start_year):        
+						print("Duration contract must be greater than 1.")
+					else:
+						break
 				else:
 					break
+				
+		while True:
+			handsetInput = str(input('Handset price: '))
+			if handsetInput == '' or handsetInput == '0':
+				print("Handset price cannot be null or less than 0")
 			else:
 				break
-
-		handsetInput = str(input('Handset price: '))
 		handsetDiscountInput = str(input('Handset discount: '))
 		packagePriceInput = str(input('Package price: '))
 
