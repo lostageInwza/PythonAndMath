@@ -11,10 +11,17 @@ class Output(object):
 		self.base_formula = BaseFormula()
 		while True:
 			print('Start Contract ex: 01/01/2018')
-			self.startContract = str(input('> ')) #'15/09/2017'
+			self.startContract = str(input('> '))
 			print('End Contract ex: 01/01/2018')
-			self.endContract = str(input('> ')) #'14/09/2018'
-		
+			self.endContract = str(input('> '))
+
+			# make data
+			#self.endContract = '08/10/2018'
+			#self.startContract = '09/10/2017'
+			#self.handsetPrice = 
+			#self.handsetDiscount =
+			#self.packagePrice
+
 			chk_start_day, chk_start_month, chk_start_year = self.base_formula.cuttingString(self.startContract)
 			chk_end_day, chk_end_month, chk_end_year = self.base_formula.cuttingString(self.endContract)
 		
@@ -31,34 +38,28 @@ class Output(object):
 			else:
 				break
 
-			#if chk_start_day < chk_end_day and chk_start_month < chk_end_month or chk_start_year > chk_end_year:
-			#	print('Something wrong with date contract, please try again :D')
-			#else:
-			#	break
-
 		handsetInput = str(input('Handset price: '))
 		handsetDiscountInput = str(input('Handset discount: '))
 		packagePriceInput = str(input('Package price: '))
 
 		freeGoodsPriceInput = str(input('Free goods price: ')) # If this value are more than 0 calculation for Case 9 will active
 		specialDiscountInput = str(input('Special Discount: ')) # If this[ value are more than 0 calculation for Case 10 will active
-		
-		self.handsetPrice = self.base_formula.addDecimal(handsetInput)
-		self.handsetDiscount = self.base_formula.addDecimal(handsetDiscountInput)
-		self.packagePrice = self.base_formula.addDecimal(packagePriceInput)
 
-		
+		self.handsetPrice = float(self.base_formula.addDecimal(handsetInput))
+		self.handsetDiscount = float(self.base_formula.addDecimal(handsetDiscountInput))*-1
+		self.packagePrice = float(self.base_formula.addDecimal(packagePriceInput))
+
 		################################ Case 9 ####################################
 		if freeGoodsPriceInput == '' or freeGoodsPriceInput == '0': 
 			self.freeGoodsPrice = 0
 		else:
-			self.freeGoodsPrice = self.base_formula.addDecimal(freeGoodsPriceInput)
+			self.freeGoodsPrice = float(self.base_formula.addDecimal(freeGoodsPriceInput))
 
 		################################ Case 10 ####################################
 		if specialDiscountInput == '' or specialDiscountInput == '0':
-			self.specialDiscount = 0
+			self.specialDiscount = float(0)
 		else:
-			self.specialDiscount = self.base_formula.addDecimal(specialDiscountInput)
+			self.specialDiscount = float(self.base_formula.addDecimal(specialDiscountInput))*-1
 
 		# Case 7, 8 will active if upgradePackagePrice is more than 0
 		#self.changePackagePrice = 1 # if value less than default Case downgrade
@@ -116,7 +117,7 @@ class Output(object):
 		self.sumImmidateHandAndDisc = self.handsetPrice + self.handsetDiscount # Sum Immediate Cashflow (Handset and Discount)
 		self.sumImmidateRev = self.revenueCompHand+self.revenueFreeGoods
 		self.diffImmidateCashAndRev = round(self.revenueCompHand-self.handsetPrice, 2) # Immediate Contract Asset (Handset)
-		self.sumImmidateContAsset = self.diffImmidateCashAndRev + (self.handsetDiscount*-1) + (self.specialDiscount*-1) + self.revenueFreeGoods # Sum immediate contract asset
+		self.sumImmidateContAsset = self.diffImmidateCashAndRev + (self.handsetDiscount*-1) + (self.specialDiscount) + self.revenueFreeGoods # Sum immediate contract asset
 		self.revenueCompPackPerMonth = self.revenueCompPack / self.duration
 		self.diffRevenueCompPackPerMonth = self.revenueCompPackPerMonth - self.packagePrice
 
@@ -179,17 +180,26 @@ class Output(object):
 		print('-'*211)
 	
 	def genEventBill(self):
+		total_normal = 0
+		total_revnue = 0
+		total_diff = 0
+
 		collect_actual = []
 		collect_accured = []
 		collect_revAccured = []
 
+		collect_revenue_actual = []
+		collect_revenue_accured = []
+		collect_revenue_revAccured = []
+
 		date_list_actual = []
 		trans_list_accured = [] # for use in reverse accured
+		trans_list_rev_accured = []
 		period = 1
 
 		package_value = self.packagePrice
 		actual_value = 0 # real usage value
-		accured_value = 0 # estimate usage valuegi
+		accured_value = 0 # estimate usage value
 		reverse_accured_value = 0 # reverse accured value in last month
 
 		rev_actual_value = 0
@@ -213,13 +223,17 @@ class Output(object):
 
 			if period != self.duration: # if period is not equal duration, accured value will appear
 				accured_value =	self.bill_cycle.calculateAccured(self.bill_to, trans_day, trans_month, trans_year, self.packagePrice)
+				rev_accured_value = self.bill_cycle.calculateAccured(self.bill_to, trans_day, trans_month, trans_year, self.revenueCompPackPerMonth)
+				diff_accured = round(rev_accured_value - accured_value, 2)
 			
 			if period == self.duration: # if period is equal duration, accured value is 0
 				accured_value = 0
+				rev_accured_value = 0
+				diff_accured = 0
 			
 			# ====================================== Actual Value ======================================
 
-			full_trans_date = self.base_formula.combineToFullDate(trans_day, trans_month, trans_year)
+			full_trans_date = self.base_formula.combineToFullDate(trans_day, trans_month, trans_year) # and reverse
 			date_list_actual.append(full_trans_date)	
 
 			if len(date_list_actual) == 3:
@@ -228,17 +242,24 @@ class Output(object):
 			if len(date_list_actual) > 1:
 				a, b = self.bill_cycle.calculateActual(self.bill_to, date_list_actual[0], date_list_actual[1], package_value)
 				actual_value = round(b, 2)
+				c, d = self.bill_cycle.calculateActual(self.bill_to, date_list_actual[0], date_list_actual[1], self.revenueCompPackPerMonth)
+				rev_actual_value = round(d, 2)
+				diff_actual = round(rev_actual_value-actual_value, 2)
 			
 			# ====================================== Reverse accured value ======================================
 			trans_list_accured.append(accured_value)
+			trans_list_rev_accured.append(rev_accured_value)
+
 			if trans_day != self.day1 and trans_month != self.month1:
 				reverse_accured_value = trans_list_accured[0]*-1
+				rev_reverse_accured_value = trans_list_rev_accured[0]*-1
 			if period == self.duration:
 				reverse_accured_value = trans_list_accured[0]*-1
+				rev_reverse_accured_value = trans_list_rev_accured[0]*-1
 
-			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, trans_day, trans_month, trans_year, 'DPR_TRANS', actual_value, rev_actual_value, diff_value)) # actual : 
-			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, trans_day, trans_month, trans_year, 'DPR_TRACC', accured_value, rev_accured_value, diff_value)) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay 
-			print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, trans_day, trans_month, trans_year, 'DPR_TRACCREV', reverse_accured_value, rev_reverse_accured_value, diff_value)) # reverse-acclue : acclue in lastmonth with negative value 
+			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, trans_day, trans_month, trans_year, 'DPR_TRANS', actual_value, rev_actual_value, round(rev_actual_value-actual_value,2))) # actual : diff_accured
+			print('T%-9s%-s/%-s/%-11s%-19s%-12s%-13s%-10s' % (period, trans_day, trans_month, trans_year, 'DPR_TRACC', accured_value, rev_accured_value, round(rev_accured_value-accured_value,2))) # acclue : (daysInMonth-nowDay + 1)/lastMonthDay  diff_actual
+			print('T%-9s%-s/%-s/%-8s%-22s%-12s%-13s%-10s' % (period, trans_day, trans_month, trans_year, 'DPR_TRACCREV', reverse_accured_value, rev_reverse_accured_value, round(rev_reverse_accured_value-reverse_accured_value,2))) # reverse-acclue : acclue in lastmonth with negative value 
 			print('------------------------------------------------------------------------------')
 
 			if period == 1 and trans_day not in (self.bill_to, self.bill_from): # if transaction day not like bill_cycle from or to transction day value is bill_to, if transaction day is bill from, it's okay do nothing whith that (not include BC11 case)
@@ -257,19 +278,41 @@ class Output(object):
 				
 			if len(trans_list_accured) == 2:
 				trans_list_accured.pop(0)
+				trans_list_rev_accured.pop(0)
 
 			#billCycleInform loop
 			period+=1
 			trans_month+=1
+
 			collect_actual.append(actual_value)
 			collect_accured.append(accured_value)
 			collect_revAccured.append(reverse_accured_value)
-			
-		print('')
-	#	print('Actual Transaction:',collect_actual)
-	#	print('Accured Transaction:',collect_accured)
-	#	print('Reverse Accured Trasnaction:',collect_revAccured)
 
+			collect_revenue_actual.append(rev_actual_value)
+			collect_revenue_accured.append(rev_accured_value)
+			collect_revenue_revAccured.append(rev_reverse_accured_value)
+
+
+		
+		for x in collect_actual:
+			total_normal+=x
+		for y in collect_accured:
+			total_normal+=y
+		for z in collect_revAccured:
+			total_normal+=z
+
+		for a in collect_revenue_actual:
+			total_revnue+=a
+		for b in collect_revenue_accured:
+			total_revnue+=b
+		for c in collect_revenue_revAccured:
+			total_revnue+=c
+
+		sum_normal = round(total_normal,2)
+		sum_revenue =  round(total_revnue,2)
+		sum_diff = sum_revenue - sum_normal
+		print("%-43s%-13s%-11s %s" % ('Total Revenue', sum_normal, sum_revenue, round(sum_diff, 2)))
+		print('='*80)
 
 	#def showReport(self):
 	#	pass
@@ -352,10 +395,13 @@ class BaseFormula(object):
 				return len(result_list)
 	
 	def addDecimal(self, a):
+		a = str(a)
 		if a.find('.') == -1:
 			con_a = str(a)
 			con_a+='.00'
-			a = float(con_a)
+			a = str(con_a)
+		else:
+			return a
 		return a
 
 class BillCycle(Output):
@@ -429,7 +475,7 @@ print('')
 a.calculateContractAsset()
 print('')
 a.genEventBill()
-input('Press any key to exit..')
+input('Press enter to exit..')
 
 
 #	def calculatePeriod(self):
